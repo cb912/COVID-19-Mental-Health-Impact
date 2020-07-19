@@ -30,3 +30,11 @@ plot_usmap(data = region, values = "depression", color = "red") +
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+#### COVID Statistics 
+```{r}
+
+
+```
+
