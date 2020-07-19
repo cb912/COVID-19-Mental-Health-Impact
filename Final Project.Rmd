@@ -1,0 +1,32 @@
+---
+title: "Final Project"
+author: "Brenda Yang, Charlie Bonetti, Nour Kanaan"
+date: "7/19/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(gdata)
+library(tidyverse)
+library(sf)
+```
+
+### map of depression across regions
+```{r data}
+region = read.xls("Region June.xls")
+library(usmap)
+library(ggplot2)
+
+plot_usmap(data = region, values = "depression", color = "red") + 
+  scale_fill_continuous(name = "depression searches", label = scales::comma) + 
+  theme(legend.position = "right")
+```
+
+## Including Plots
+
+```{r pressure, echo=FALSE}
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
