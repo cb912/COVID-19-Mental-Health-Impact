@@ -14,11 +14,17 @@ library(sf)
 
 ### map of depression across regions
 ```{r data}
-region = read.xls("data/state depression rates 2020.xls")
+dstate = read.xls("data/state depression rates 2020.xls")
+astate = read.xls("data/State anxiety trends 2020.xls")
+dtrends2020 = read.xls("data/April 2020 depression trends.xls")
+dtrends2018 = read.xls("data/April 2018 depression trends.xls")
+```
+
+```{r graph}
 library(usmap)
 library(ggplot2)
 
-plot_usmap(data = region, values = "depression", color = "red") + 
+plot_usmap(data = dstate, values = "depression", color = "red") + 
   scale_fill_continuous(name = "depression searches", label = scales::comma) + 
   theme(legend.position = "right")
 ```
