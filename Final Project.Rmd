@@ -14,7 +14,7 @@ library(sf)
 
 ### map of depression across regions
 ```{r data}
-region = read.xls("data/Region June.xls")
+region = read.xls("data/state depression rates 2020.xls")
 library(usmap)
 library(ggplot2)
 
