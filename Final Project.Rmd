@@ -27,6 +27,15 @@ covidrate <- covid_data %>%
 ```
 
 ### Comparing depression trends between April 2020 and April 2018
+```{r}
+ggplot(data = dtrends2020, mapping = aes(x = depression)) +
+  geom_histogram(color = "darkblue", fill = "lightblue", binwidth = 1)+ 
+  labs(title = "Most states have approx. 30% adult obesity", 
+       x = "Adult Obesity (%)", 
+       y = "Count")
+```
+
+
 ```{r, depression-year-comparison, echo = FALSE}
 d2020 <- dtrends2020 %>% 
   select(depression) %>% 
