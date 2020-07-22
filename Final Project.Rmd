@@ -13,8 +13,7 @@ library(sf)
 library(readxl)
 ```
 
-### data variables
-```{r data, echo = FALSE}
+```{r data-variables, echo = FALSE}
 dstate = read.xls("data/state depression rates 2020.xls")
 astate = read.xls("data/State anxiety trends 2020.xls")
 dtrends2020 = read.xls("data/April 2020 depression trends.xls")
@@ -22,7 +21,9 @@ dtrends2018 = read.xls("data/April 2018 depression trends.xls")
 atrends2020 = read.xls("data/April 2020 anxiety trends.xls")
 atrends2018 = read.xls("data/April 2018 anxiety trends.xls")
 deathrate = read.csv("data/restriction rankings.csv")
-covidrate = read_excel("data/April COVID Cases by State.xlsx")
+covid_data = read_excel("data/April COVID Cases by State.xlsx")
+covidrate <- covid_data %>%
+  select(`New COVID cases per 100,000 in April`)
 ```
 
 ### Comparing depression trends between April 2020 and April 2018
@@ -44,12 +45,44 @@ t.test(d2020, d2018, mu = 0,
 
 The null hypothesis is that there is no difference in the mean amount of depression searches in the US between the times of April 2020 and April 2018. The alternate hypothesis is that there is a difference between the two means. Assuming that the null hypothesis is true, the model follows a t-distribution. The t-statistic is 0.755 and the df = 29. This corresponds to a p-value of 0.4561. We cannot reject the null at the alpha = 0.05 level. We do not have enough evidence to claim that there is a difference in the mean amount of depression searches in the US between the times of April 2020 and April 2018. 
 
+### COVID cases vs. depression rate
+```{r variables, echo = FALSE}
+covidrate <- covidrate %>%
+  mutate(case_cat = case_when(
+    `New COVID cases per 100,000 in April` <= 91 ~ "low",
+    `New COVID cases per 100,000 in April` > 91 & `New COVID cases per 100,000 in April` < 200 ~ "medium",
+    `New COVID cases per 100,000 in April` >= 200 ~ "high"
+  ))
+```
+
+```{r ANOVA-test}
+restriction_by_case <- aov(`New COVID cases per 100,000 in April` ~ case_cat, data = covidrate)
+summary(restriction_by_case)
+```
+interpretation for ANOVA here
+
 ### Restriction vs. depression rate
 ```{r restriction-depression, echo = FALSE}
 
 ```
 
+### Comparing anxiety trends in April 2020 to April 2018
+```{r}
+a2020 <- atrends2020 %>% 
+  select(anxiety) %>% 
+  pull()
 
+a2018 <- atrends2018 %>% 
+  select(anxiety) %>% 
+  pull()
+
+t.test(a2020, a2018, mu = 0, 
+       alternative = "two.sided", 
+       paired = TRUE, 
+       var.equal = FALSE,
+       conf.level = 0.95)
+```
+The null hypothesis is that there is no difference in the mean amount of anxiety searches in the US between the times of April 2020 and April 2018. The alternate hypothesis is that there is a difference between the two means. Assuming that the null hypothesis is true, the model follows a t-distribution. The t-statistic is 1.66 and the df = 29. This corresponds to a p-value of 0.1086. We cannot reject the null at the alpha = 0.05 level. We do not have enough evidence to claim that there is a difference in the mean amount of anxiety searches in the US between the times of April 2020 and April 2018. 
 
 ### Depression rate in each state map
 ```{r graph}
