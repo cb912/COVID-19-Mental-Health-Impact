@@ -117,12 +117,23 @@ covidrate_rank <- State_final %>%
 require(reshape)
 State_final <- rename(State_final,c('New COVID cases per 100,000 in April'= "COVID_Rate"))
 State_final <- rename(State_final,c('May-5'= "restriction_ranks"))
+``` 
 
+
+#### Effect of COVID on depression/anxiety rates in each State 
+```{r}
+ggplot(data = State_final, mapping = aes(x = COVID_Rate, y = depression)) +
+  geom_point() +
+  labs(title = "No trend", 
+       x = "COVID-19 infection rate (per 100,000) ", 
+       y = "Google searches for depression (relative to state)" )
+
+ggplot(data = State_final, mapping = aes(x = COVID_Rate, y = anxiety)) +
+  geom_point() +
+  labs(title = "Curvilinear?", 
+       x = "COVID-19 infection rate (per 100,000) ", 
+       y = "Google searches for anxiety (relative to state)" )
 ```
 
-
-
-
-
-
+#### Effect of severity of restrictions on depression/anxiety rates in each State
 
