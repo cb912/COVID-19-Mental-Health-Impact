@@ -20,10 +20,8 @@ dtrends2020 = read.xls("data/April 2020 depression trends.xls")
 dtrends2018 = read.xls("data/April 2018 depression trends.xls")
 atrends2020 = read.xls("data/April 2020 anxiety trends.xls")
 atrends2018 = read.xls("data/April 2018 anxiety trends.xls")
-deathrate = read.csv("data/restriction rankings.csv")
-covid_data = read_excel("data/April COVID Cases by State.xlsx")
-covidrate <- covid_data %>%
-  select(`New COVID cases per 100,000 in April`)
+restrictions = read.csv("data/restriction rankings.csv")
+covidrate = read.xls("data/COVID by state:d.xls")
 ```
 
 ### Comparing depression trends between April 2020 and April 2018
@@ -51,25 +49,20 @@ The null hypothesis is that there is no difference in the mean amount of depress
 ```{r variables, echo = FALSE}
 covidrate <- covidrate %>%
   mutate(case_cat = case_when(
-    `New COVID cases per 100,000 in April` <= 91 ~ "low",
-    `New COVID cases per 100,000 in April` > 91 & `New COVID cases per 100,000 in April` < 200 ~ "medium",
-    `New COVID cases per 100,000 in April` >= 200 ~ "high"
+    New.COVID.cases.per.100.000.in.April <= 91 ~ "low",
+    New.COVID.cases.per.100.000.in.April > 91 & New.COVID.cases.per.100.000.in.April < 200 ~ "medium",
+    New.COVID.cases.per.100.000.in.April >= 200 ~ "high"
   ))
 ```
 
-```{r ANOVA-test}
-restriction_by_case <- aov(`New COVID cases per 100,000 in April` ~ case_cat, data = covidrate)
-summary(restriction_by_case)
+```{r ANOVA-test, echo = FALSE}
+death_by_case <- aov(depression ~ case_cat, data = covidrate)
+summary(death_by_case)
 ```
-interpretation for ANOVA here
-
-### Restriction vs. depression rate
-```{r restriction-depression, echo = FALSE}
-
-```
+The null is that there is no significant difference between the mean depression trends of states with low COVID cases, medium COVID cases, and high COVID cases. The alternate hypothesis is that there exists at least one mean that is different. Assuming the null hypothesis is true, the model follows an F distribution with a df of 2. The F-statistic is 1.334, and the corresponding p-value is 0.273. Therefore, we can not reject the null under the alpha = 0.05 significance level. There is not enough evidence to suggest that there is at least one difference in mean depression trends of states with low, medium, and high COVID cases.
 
 ### Comparing anxiety trends in April 2020 to April 2018
-```{r}
+```{r, echo = FALSE}
 a2020 <- atrends2020 %>% 
   select(anxiety) %>% 
   pull()
@@ -86,8 +79,16 @@ t.test(a2020, a2018, mu = 0,
 ```
 The null hypothesis is that there is no difference in the mean amount of anxiety searches in the US between the times of April 2020 and April 2018. The alternate hypothesis is that there is a difference between the two means. Assuming that the null hypothesis is true, the model follows a t-distribution. The t-statistic is 1.66 and the df = 29. This corresponds to a p-value of 0.1086. We cannot reject the null at the alpha = 0.05 level. We do not have enough evidence to claim that there is a difference in the mean amount of anxiety searches in the US between the times of April 2020 and April 2018. 
 
+### COVID cases vs. anxiety rate
+
+```{r ANOVA-test-anxiety, echo = FALSE}
+restriction_by_case <- aov(anxiety ~ case_cat, data = covidrate)
+summary(restriction_by_case)
+```
+The null is that there is no significant difference between the mean anxiety trends of states with low COVID cases, medium COVID cases, and high COVID cases. The alternate hypothesis is that there exists at least one mean that is different. Assuming the null hypothesis is true, the model follows an F distribution with a df of 2. The F-statistic is 3.826, and the corresponding p-value is 0.0287. Therefore, we can reject the null under the alpha = 0.05 significance level. There is  enough evidence to suggest that there is at least one difference in mean anxiety trends of states with low, medium, and high COVID cases.
+
 ### Depression rate in each state map
-```{r graph}
+```{r graph, echo = FALSE}
 library(usmap)
 library(ggplot2)
 
@@ -98,7 +99,6 @@ plot_usmap(data = dstate, values = "depression", color = "red") +
 
 #### Nour Visuals 
 
-```{r}
 State_trends1 <- merge(astate, dstate, by= "state")
 State_trends3 <- merge(restriction_rankings, stateCovid, by= "state")
 State_Data <- merge(State_trends1,State_trends3, by= "state")
@@ -111,7 +111,6 @@ covidrate_rank <- State_final %>%
     `New COVID cases per 100,000 in April` > 91 & `New COVID cases per 100,000 in April` < 200 ~ "medium",
     `New COVID cases per 100,000 in April` >= 200 ~ "high"))
 
-```
 
 
 
