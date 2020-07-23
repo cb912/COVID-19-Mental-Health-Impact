@@ -99,6 +99,7 @@ plot_usmap(data = dstate, values = "depression", color = "red") +
 
 #### Nour Visuals 
 
+```{r}
 State_trends1 <- merge(astate, dstate, by= "state")
 State_trends3 <- merge(restriction_rankings, stateCovid, by= "state")
 State_Data <- merge(State_trends1,State_trends3, by= "state")
@@ -110,6 +111,8 @@ covidrate_rank <- State_final %>%
     `New COVID cases per 100,000 in April` <= 91 ~ "low",
     `New COVID cases per 100,000 in April` > 91 & `New COVID cases per 100,000 in April` < 200 ~ "medium",
     `New COVID cases per 100,000 in April` >= 200 ~ "high"))
+```
+
 
 
 
