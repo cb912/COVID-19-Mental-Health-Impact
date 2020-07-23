@@ -61,6 +61,11 @@ summary(death_by_case)
 ```
 The null is that there is no significant difference between the mean depression trends of states with low COVID cases, medium COVID cases, and high COVID cases. The alternate hypothesis is that there exists at least one mean that is different. Assuming the null hypothesis is true, the model follows an F distribution with a df of 2. The F-statistic is 1.334, and the corresponding p-value is 0.273. Therefore, we can not reject the null under the alpha = 0.05 significance level. There is not enough evidence to suggest that there is at least one difference in mean depression trends of states with low, medium, and high COVID cases.
 
+### Restrictions vs. depression
+```{r}
+
+```
+
 ### Comparing anxiety trends in April 2020 to April 2018
 ```{r, echo = FALSE}
 a2020 <- atrends2020 %>% 
@@ -82,8 +87,8 @@ The null hypothesis is that there is no difference in the mean amount of anxiety
 ### COVID cases vs. anxiety rate
 
 ```{r ANOVA-test-anxiety, echo = FALSE}
-restriction_by_case <- aov(anxiety ~ case_cat, data = covidrate)
-summary(restriction_by_case)
+aCOVID_by_rate <- aov(anxiety ~ case_cat, data = covidrate)
+summary(aCOVID_by_rate)
 ```
 The null is that there is no significant difference between the mean anxiety trends of states with low COVID cases, medium COVID cases, and high COVID cases. The alternate hypothesis is that there exists at least one mean that is different. Assuming the null hypothesis is true, the model follows an F distribution with a df of 2. The F-statistic is 3.826, and the corresponding p-value is 0.0287. Therefore, we can reject the null under the alpha = 0.05 significance level. There is  enough evidence to suggest that there is at least one difference in mean anxiety trends of states with low, medium, and high COVID cases.
 
@@ -99,41 +104,23 @@ plot_usmap(data = dstate, values = "depression", color = "red") +
 
 #### Nour Visuals 
 
-```{r}
-State_trends1 <- merge(astate, dstate, by= "state")
-State_trends3 <- merge(restriction_rankings, stateCovid, by= "state")
-State_Data <- merge(State_trends1,State_trends3, by= "state")
-State_final <- State_Data %>% 
-  select(state, anxiety, depression, '5-May', `New COVID cases per 100,000 in April`)
-covidrate_rank <- State_final %>%
-  select(`New COVID cases per 100,000 in April`)  %>%
-  mutate(case_cat = case_when(
-    `New COVID cases per 100,000 in April` <= 91 ~ "low",
-    `New COVID cases per 100,000 in April` > 91 & `New COVID cases per 100,000 in April` < 200 ~ "medium",
-    `New COVID cases per 100,000 in April` >= 200 ~ "high"))
-```
-
-```{r}
-require(reshape)
-State_final <- rename(State_final,c('New COVID cases per 100,000 in April'= "COVID_Rate"))
-State_final <- rename(State_final,c('May-5'= "restriction"))
-``` 
-
-
 #### Effect of COVID on depression/anxiety rates in each State 
-```{r}
-ggplot(data = State_final, mapping = aes(x = COVID_Rate, y = depression)) +
+```{r covid vs. depression}
+ggplot(data = covidrate, mapping = aes(x = New.COVID.cases.per.100.000.in.April, y = depression)) +
   geom_point() +
   labs(title = "No trend", 
        x = "COVID-19 infection rate (per 100,000) ", 
        y = "Google searches for depression (relative to state)" )
+```
 
-ggplot(data = State_final, mapping = aes(x = COVID_Rate, y = anxiety)) +
+```{r}
+ggplot(data = covidrate, mapping = aes(x = New.COVID.cases.per.100.000.in.April, y = anxiety)) +
   geom_point() +
   labs(title = "Curvilinear?", 
        x = "COVID-19 infection rate (per 100,000) ", 
        y = "Google searches for anxiety (relative to state)" )
 ```
+
 
 #### Effect of severity of restrictions on depression/anxiety rates in each State
 
