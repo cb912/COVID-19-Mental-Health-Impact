@@ -116,7 +116,7 @@ covidrate_rank <- State_final %>%
 ```{r}
 require(reshape)
 State_final <- rename(State_final,c('New COVID cases per 100,000 in April'= "COVID_Rate"))
-State_final <- rename(State_final,c('May-5'= "restriction_ranks"))
+State_final <- rename(State_final,c('May-5'= "restriction"))
 ``` 
 
 
