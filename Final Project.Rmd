@@ -137,3 +137,4 @@ ggplot(data = State_final, mapping = aes(x = COVID_Rate, y = anxiety)) +
 
 #### Effect of severity of restrictions on depression/anxiety rates in each State
 
+
