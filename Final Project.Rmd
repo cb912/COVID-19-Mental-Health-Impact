@@ -21,7 +21,7 @@ dtrends2018 = read.xls("data/April 2018 depression trends.xls")
 atrends2020 = read.xls("data/April 2020 anxiety trends.xls")
 atrends2018 = read.xls("data/April 2018 anxiety trends.xls")
 restrictions = read.csv("data/restriction rankings.csv")
-covidrate = read.xls("data/COVID by state:d.xls")
+covidrate = read.xls("data/all_data.xls")
 ```
 
 ### Comparing depression trends between April 2020 and April 2018
