@@ -55,16 +55,28 @@ covidrate <- covidrate %>%
   ))
 ```
 
-```{r ANOVA-test, echo = FALSE}
+```{r ANOVA-test-depression-covid, echo = FALSE}
 death_by_case <- aov(depression ~ case_cat, data = covidrate)
 summary(death_by_case)
 ```
 The null is that there is no significant difference between the mean depression trends of states with low COVID cases, medium COVID cases, and high COVID cases. The alternate hypothesis is that there exists at least one mean that is different. Assuming the null hypothesis is true, the model follows an F distribution with a df of 2. The F-statistic is 1.334, and the corresponding p-value is 0.273. Therefore, we can not reject the null under the alpha = 0.05 significance level. There is not enough evidence to suggest that there is at least one difference in mean depression trends of states with low, medium, and high COVID cases.
 
 ### Restrictions vs. depression
-```{r}
+```{r restrictions-depression, echo = FALSE}
+covidrate <- covidrate %>%
+  mutate(restriction_cat = case_when(
+    restriction <= 15 ~ "low",
+    restriction >= 15 & restriction <= 33 ~ "medium",
+    restriction > 33 ~ "high"
+  ))
+```
+
+```{r ANOVA-test-restriction-depression, echo = FALSE}
+restriction_by_case <- aov(depression ~ restriction_cat, data = covidrate)
+summary(restriction_by_case)
 
 ```
+The null is that there is no significant difference between the mean depression trends of states with low restrictions, medium restrictions, and high restrictions. The alternate hypothesis is that there exists at least one mean that is different. Assuming the null hypothesis is true, the model follows an F distribution with a df of 2. The F-statistic is 0.516, and the corresponding p-value is 0.6. Therefore, we can not reject the null under the alpha = 0.05 significance level. There is not enough evidence to suggest that there is at least one difference in mean depression trends of states with low, medium, and high restrictions.
 
 ### Comparing anxiety trends in April 2020 to April 2018
 ```{r, echo = FALSE}
@@ -91,6 +103,14 @@ aCOVID_by_rate <- aov(anxiety ~ case_cat, data = covidrate)
 summary(aCOVID_by_rate)
 ```
 The null is that there is no significant difference between the mean anxiety trends of states with low COVID cases, medium COVID cases, and high COVID cases. The alternate hypothesis is that there exists at least one mean that is different. Assuming the null hypothesis is true, the model follows an F distribution with a df of 2. The F-statistic is 3.826, and the corresponding p-value is 0.0287. Therefore, we can reject the null under the alpha = 0.05 significance level. There is  enough evidence to suggest that there is at least one difference in mean anxiety trends of states with low, medium, and high COVID cases.
+
+### Restrictions vs. anxiety
+```{r ANOVA-test-restriction-anxiety, echo = FALSE}
+a_restriction_by_case <- aov(anxiety ~ restriction_cat, data = covidrate)
+summary(a_restriction_by_case)
+
+```
+The null is that there is no significant difference between the mean anxiety trends of states with low restrictions, medium restrictions, and high restrictions. The alternate hypothesis is that there exists at least one mean that is different. Assuming the null hypothesis is true, the model follows an F distribution with a df of 2. The F-statistic is 6.746, and the corresponding p-value is 0.00262. Therefore, we reject the null under the alpha = 0.05 significance level. There is enough evidence to suggest that there is at least one difference in mean anxiety trends of states with low, medium, and high restrictions.
 
 ### Depression rate in each state map
 ```{r graph, echo = FALSE}
