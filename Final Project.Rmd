@@ -71,6 +71,11 @@ covidrate <- covidrate %>%
   ))
 ```
 
+```{r covid-depression-assumptions, echo = FALSE}
+covidrate %>%
+  filter(case_cat == "low")
+```
+
 ```{r ANOVA-test-depression-covid, echo = FALSE}
 death_by_case <- aov(depression ~ case_cat, data = covidrate)
 summary(death_by_case)
