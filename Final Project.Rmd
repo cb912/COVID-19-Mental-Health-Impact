@@ -25,8 +25,6 @@ covidrate = read.xls("data/all_data.xls")
 ```
 
 ### Comparing depression trends between April 2020 and April 2018
-
-
 ```{r, depression-year-comparison, echo = FALSE}
 d2020 <- dtrends2020 %>% 
   select(depression) %>% 
@@ -108,7 +106,6 @@ The null is that there is no significant difference between the mean anxiety tre
 ```{r ANOVA-test-restriction-anxiety, echo = FALSE}
 a_restriction_by_case <- aov(anxiety ~ restriction_cat, data = covidrate)
 summary(a_restriction_by_case)
-
 ```
 The null is that there is no significant difference between the mean anxiety trends of states with low restrictions, medium restrictions, and high restrictions. The alternate hypothesis is that there exists at least one mean that is different. Assuming the null hypothesis is true, the model follows an F distribution with a df of 2. The F-statistic is 6.746, and the corresponding p-value is 0.00262. Therefore, we reject the null under the alpha = 0.05 significance level. There is enough evidence to suggest that there is at least one difference in mean anxiety trends of states with low, medium, and high restrictions.
 
@@ -117,8 +114,8 @@ The null is that there is no significant difference between the mean anxiety tre
 library(usmap)
 library(ggplot2)
 
-plot_usmap(data = dstate, values = "depression", color = "red") + 
-  scale_fill_continuous(name = "depression searches", label = scales::comma) + 
+plot_usmap(data = dstate, values = "depression", color = "black") + 
+  scale_fill_gradient(name = "depression searches", low = "azure1", high ="cadetblue4") +
   theme(legend.position = "right")
 ```
 
