@@ -183,7 +183,28 @@ ggplot(data = covidrate, mapping = aes(x = New.COVID.cases.per.100.000.in.April,
 
 #### Effect of severity of restrictions on depression/anxiety rates in each State
 
-```{r restrictions}
+```{r restrictions depression}
+ggplot(data = covidrate, mapping = aes(x = restriction_cat, y = depression)) + 
+  geom_boxplot() + 
+  labs(title = "Higher restrictions associated with lower depression", 
+       x = "Restrictions", 
+       y = "Google searches for depression")
+```
+
+```{r restrrictionsanxiety}
+ggplot(data = covidrate, mapping = aes(x = restriction_cat, y = anxiety)) + 
+  geom_boxplot() + 
+  labs(title = "Higher restrictions associated with higher anxiety", 
+       x = "Restrictions", 
+       y = "Google searches for anxiety")
+```
+
+
+#### How does the severity of restrictions affect the relationship between anxiety and COVID rates in the 50 states 
+
+```{r COVIDRESTRICTIONS}
 
 ```
+
+
 
