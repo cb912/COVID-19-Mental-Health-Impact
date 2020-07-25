@@ -25,7 +25,25 @@ covidrate = read.xls("data/all_data.xls")
 ```
 
 ### Comparing depression trends between April 2020 and April 2018
-```{r, depression-year-comparison, echo = FALSE}
+```{r depression-assumptions-2018, echo = FALSE}
+ggplot(data = dtrends2018, mapping = aes(x = depression)) +
+  geom_histogram(color = "snow3", fill = "mediumaquamarine", binwidth = 1)+ 
+  labs(title = "depression searches by week in April 2020 are not normally distributed", 
+       x = "depression searches", 
+       y = "Number of weeks")
+```
+n<30 and not normal distribution: assumption for t-test not satisfied
+
+```{r depression-assumptions-2020, echo = FALSE}
+ggplot(data = dtrends2020, mapping = aes(x = depression)) +
+  geom_histogram(color = "snow3", fill = "cadetblue3", binwidth = 1)+ 
+  labs(title = "depression searches by week in April 2020 are not normally distributed", 
+       x = "depression searches", 
+       y = "number of weeeks")
+```
+n<30 and not normal distribution: assumption for t-test not satisfied
+
+```{r, depression-year-analysis, echo = FALSE}
 d2020 <- dtrends2020 %>% 
   select(depression) %>% 
   pull()
@@ -77,6 +95,24 @@ summary(restriction_by_case)
 The null is that there is no significant difference between the mean depression trends of states with low restrictions, medium restrictions, and high restrictions. The alternate hypothesis is that there exists at least one mean that is different. Assuming the null hypothesis is true, the model follows an F distribution with a df of 2. The F-statistic is 0.516, and the corresponding p-value is 0.6. Therefore, we can not reject the null under the alpha = 0.05 significance level. There is not enough evidence to suggest that there is at least one difference in mean depression trends of states with low, medium, and high restrictions.
 
 ### Comparing anxiety trends in April 2020 to April 2018
+```{r anxiety-assumptions-2018}
+ggplot(data = atrends2018, mapping = aes(x = anxiety)) +
+  geom_histogram(color = "snow3", fill = "cornflowerblue", binwidth = 1)+ 
+  labs(title = "anxiety searches by week in April 2020 are normally distributed", 
+       x = "anxiety searches", 
+       y = "number of weeeks")
+```
+n<30, but has a normal distribution?? : assumption satisfied
+
+```{r anxiety-assumptions-2020}
+ggplot(data = atrends2020, mapping = aes(x = anxiety)) +
+  geom_histogram(color = "snow3", fill = "lightsteelblue", binwidth = 1)+ 
+  labs(title = "anxiety searches by week in April 2020 are not normally distributed", 
+       x = "anxiety searches", 
+       y = "number of weeeks")
+```
+n<30 and not normal distribution: assumption not satisfied
+
 ```{r, echo = FALSE}
 a2020 <- atrends2020 %>% 
   select(anxiety) %>% 
