@@ -165,15 +165,16 @@ plot_usmap(data = dstate, values = "depression", color = "black") +
 #### Effect of COVID on depression/anxiety rates in each State 
 ```{r covid vs. depression}
 ggplot(data = covidrate, mapping = aes(x = New.COVID.cases.per.100.000.in.April, y = depression)) +
-  geom_point() +
+  geom_point(color= "red") +
   labs(title = "No trend", 
        x = "COVID-19 infection rate (per 100,000) ", 
        y = "Google searches for depression (relative to state)" )
 ```
 
+
 ```{r}
 ggplot(data = covidrate, mapping = aes(x = New.COVID.cases.per.100.000.in.April, y = anxiety)) +
-  geom_point() +
+  geom_point(color = "orange") +
   labs(title = "Curvilinear?", 
        x = "COVID-19 infection rate (per 100,000) ", 
        y = "Google searches for anxiety (relative to state)" )
@@ -182,4 +183,7 @@ ggplot(data = covidrate, mapping = aes(x = New.COVID.cases.per.100.000.in.April,
 
 #### Effect of severity of restrictions on depression/anxiety rates in each State
 
+```{r restrictions}
+
+```
 
