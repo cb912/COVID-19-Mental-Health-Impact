@@ -197,57 +197,52 @@ plot_usmap(data = dstate, values = "depression", color = "black") +
 
 #### Nour Visuals 
 
-#### Effect of COVID on depression/anxiety rates in each State 
-```{r covid vs. depression}
-ggplot(data = covidrate, mapping = aes(x = New.COVID.cases.per.100.000.in.April, y = depression)) +
-  geom_point(color= "red") +
-  labs(title = "No trend", 
-       x = "COVID-19 infection rate (per 100,000) ", 
+#### Effect of COVID on depression rates in each State 
+```{r depressionVScovid}
+ggplot(covidrate, aes(New.COVID.cases.per.100.000.in.April, depression)) +
+  geom_point(shape=1) +
+   geom_smooth(method=lm) +
+  labs(title = "No correlation", 
+       x = "New COVID-19 cases (per 100,000) ", 
        y = "Google searches for depression (relative to state)" )
 ```
+The above scatterplot shows the relative google searches for depression among the 50 american states as a function of new COVID-19 cases per 100,000 during the month of april, 2020.
+The line of best fit (in blue) is horizontal with R = approximately zero. Thus, we cannot see any correlation between the new COVID-19 cases and the google searches for depression for the month of april.  
 
 
-```{r}
-ggplot(data = covidrate, mapping = aes(x = New.COVID.cases.per.100.000.in.April, y = anxiety)) +
-  geom_point(color= "orange") + facet_grid(party~.) + 
-  labs(title = "No trend", 
+#### Effect of COVID on anxiety rates in each State 
+```{r anxietyVScovid}
+ggplot(covidrate, aes(New.COVID.cases.per.100.000.in.April, anxiety)) +
+  geom_point(shape=1) +
+   geom_smooth(method=lm) +
+  labs(title = "More COVID cases assosciated with higher anxiety", 
        x = "COVID-19 infection rate (per 100,000) ", 
        y = "Google searches for anxiety (relative to state)" )
 ```
 
+The above scatterplot shows the relative google searches for anxiety among the 50 american states as a function of new COVID-19 cases per 100,000 during the month of april, 2020.
+The line of best fit (in blue) has a positive slope. Thus, we can conclude that there's a correlation between anxiety searches and new COVID cases during the month of april. The more new COVID cases a state records, the higher anxiety searches it's expected to have.  
 
-#### Effect of severity of restrictions on depression/anxiety rates in each State
+#### Restrictions effect on anxiety rates 
 
-```{r restrictions depression}
-ggplot(data = covidrate, mapping = aes(x = restriction_cat, y = depression, fill= restriction_cat)) + 
-  geom_boxplot() + 
-  labs(title = "Higher restrictions associated with lower depression", 
-       x = "Restrictions", 
-       y = "Google searches for depression")
-```
-
-```{r restrrictionsanxiety}
-ggplot(data = covidrate, mapping = aes(x = restriction_cat, y = anxiety, fill= restriction_cat)) + 
-  geom_boxplot() + 
-  labs(title = "Higher restrictions associated with higher anxiety", 
+```{r anxietyVSrestrictions}
+covidrate %>% 
+  mutate( type=ifelse(restriction_cat=="high","Highlighted","Normal")) %>% ggplot( aes(x=restriction_cat, y=anxiety, fill=type, alpha=type)) + 
+    geom_boxplot() +
+    scale_fill_manual(values=c("#69b3a2", "grey")) +
+    scale_alpha_manual(values=c(1,0.1)) +
+    theme(legend.position = "none") +
+    labs(title = "Higher restrictions associated with higher anxiety", 
        x = "Restrictions", 
        y = "Google searches for anxiety")
 ```
 
+The above boxplot shows that the states with the highest COVID-related restrictions also record the highest google searches for anxiety compared to the states with low or moderate COVID-related restrictions. We notice that the highlighted box corresponding to the high restrictions states shows the highest median (approximately 87 compared to 78 and 79) and the highest maximum (approximately 97) and minimum (Approximately 76) upon excluding the extreme outliers in the medium group. 
 
-#### How does the severity of restrictions affect the relationship between anxiety and COVID rates in the 50 states 
-
-```{r COVIDRESTRICTIONS}
-ggplot(data = covidrate, mapping = aes(x = New.COVID.cases.per.100.000.in.April, y = depression)) +
-  geom_line() + 
-  geom_point() + 
-  labs(title = "Obesity by State", 
-       x = "State", 
-       y = "Adult Obesity (%)")
-```
+#### What makes people more anxious, restrictions or COVID?
 
 
-```{r}
 
-```
+
+
 
