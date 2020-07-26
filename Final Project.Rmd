@@ -11,6 +11,7 @@ library(gdata)
 library(tidyverse)
 library(sf)
 library(readxl)
+library(broom)
 ```
 
 ```{r data-variables, echo = FALSE}
@@ -73,7 +74,7 @@ covidrate <- covidrate %>%
 
 ```{r covid-depression-assumptions, echo = FALSE}
 ggplot(data = covidrate, mapping = aes(x = depression)) +
-  geom_histogram(color = "dodgerblue", fill = "lightsteelblue", binwidth = 1)+
+  geom_histogram(color = "dodgerblue", fill = "lightsteelblue", binwidth = 3)+
   facet_grid(case_cat~.) +
   labs(title = "Depression search trends for states with high COVID cases has a normal distribution?", 
        x = "depression searches", 
@@ -99,9 +100,9 @@ covidrate <- covidrate %>%
 
 ```{r restriction-depression-assumptions, echo = FALSE}
 ggplot(data = covidrate, mapping = aes(x = depression)) +
-  geom_histogram(color = "lavender", fill = "mediumpurple", binwidth = 1)+
+  geom_histogram(color = "lavender", fill = "mediumpurple", binwidth = 3)+
   facet_grid(restriction_cat~.) +
-  labs(title = "Depression search trends for states with high restrictions has a normal distribution?", 
+  labs(title = "Depression search trends for states with high restrictions has a normal distribution", 
        x = "depression searches", 
        y = "number of states")
 ```
@@ -154,7 +155,7 @@ The null hypothesis is that there is no difference in the mean amount of anxiety
 
 ```{r covid-anxiety-assumptions, echo = FALSE}
 ggplot(data = covidrate, mapping = aes(x = anxiety)) +
-  geom_histogram(color = "darkgrey", fill = "lightcyan2", binwidth = 1)+
+  geom_histogram(color = "darkgrey", fill = "lightcyan2", binwidth = 3)+
   facet_grid(case_cat~.) +
   labs(title = "Anxiety search trends for all levels of COVID cases do not have normal distributions", 
        x = "anxiety searches", 
@@ -171,7 +172,7 @@ The null is that there is no significant difference between the mean anxiety tre
 ### Restrictions vs. anxiety
 ```{r restriction-anxiety-assumptions, echo = FALSE}
 ggplot(data = covidrate, mapping = aes(x = anxiety)) +
-  geom_histogram(color = "cornsilk2", fill = "hotpink4", binwidth = 1)+
+  geom_histogram(color = "cornsilk2", fill = "hotpink4", binwidth = 3)+
   facet_grid(restriction_cat~.) +
   labs(title = "anxiety search trends for all restriction levels do not have normal distributions", 
        x = "anxiety searches", 
