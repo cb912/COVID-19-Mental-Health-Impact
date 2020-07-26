@@ -72,9 +72,14 @@ covidrate <- covidrate %>%
 ```
 
 ```{r covid-depression-assumptions, echo = FALSE}
-covidrate %>%
-  filter(case_cat == "low")
+ggplot(data = covidrate, mapping = aes(x = depression)) +
+  geom_histogram(color = "dodgerblue", fill = "lightsteelblue", binwidth = 1)+
+  facet_grid(case_cat~.) +
+  labs(title = "Depression search trends for states with high COVID cases has a normal distribution?", 
+       x = "depression searches", 
+       y = "number of states")
 ```
+The outcomes within each group is not normal. The depression search trends for states with medium numbers of COVID cases and low numbers of COVID cases do not have a normal distribution, and n<30. Therefore, this assumption is not satisfied. By looking at the graphs, it also seems that there is not equal variance among each group, not satisfying the assumption of homoscedastic variance. In addition, these samples may not all be independent. Some states may have the same values/cultures as others, causing the people who live in each state to react to the virus similarly to each other and affecting the depression searches within those states. Therefore, the assumptions for ANOVA are not satisfied. 
 
 ```{r ANOVA-test-depression-covid, echo = FALSE}
 death_by_case <- aov(depression ~ case_cat, data = covidrate)
@@ -91,6 +96,16 @@ covidrate <- covidrate %>%
     restriction > 33 ~ "high"
   ))
 ```
+
+```{r restriction-depression-assumptions, echo = FALSE}
+ggplot(data = covidrate, mapping = aes(x = depression)) +
+  geom_histogram(color = "lavender", fill = "mediumpurple", binwidth = 1)+
+  facet_grid(restriction_cat~.) +
+  labs(title = "Depression search trends for states with high restrictions has a normal distribution?", 
+       x = "depression searches", 
+       y = "number of states")
+```
+Looking at the graphs, outcomes within groups are not normally distributed for low and medium restriction level states, so this assumption is not satisfied. It also looks like the within-group variance among all groups is not the same, so the assumption for homoscedastic variance is not satisfied. The samples are also not independent because states with similar values that live close to each other my have similar anxiety search trends. The assumptions for ANOVA are not satisfied. 
 
 ```{r ANOVA-test-restriction-depression, echo = FALSE}
 restriction_by_case <- aov(depression ~ restriction_cat, data = covidrate)
@@ -137,6 +152,16 @@ The null hypothesis is that there is no difference in the mean amount of anxiety
 
 ### COVID cases vs. anxiety rate
 
+```{r covid-anxiety-assumptions, echo = FALSE}
+ggplot(data = covidrate, mapping = aes(x = anxiety)) +
+  geom_histogram(color = "darkgrey", fill = "lightcyan2", binwidth = 1)+
+  facet_grid(case_cat~.) +
+  labs(title = "Anxiety search trends for all levels of COVID cases do not have normal distributions", 
+       x = "anxiety searches", 
+       y = "number of states")
+```
+Looking at the graphs, outcomes within groups are not normally distributed for any level of COVID cases, so this assumption is not satisfied. It also looks like the within-group variance among all groups is not the same, so the assumption for homoscedastic variance is not satisfied. The samples are also not independent because states with similar values that live close to each other my have similar anxiety search trends. The assumptions for ANOVA are not satisfied. 
+
 ```{r ANOVA-test-anxiety, echo = FALSE}
 aCOVID_by_rate <- aov(anxiety ~ case_cat, data = covidrate)
 summary(aCOVID_by_rate)
@@ -144,6 +169,16 @@ summary(aCOVID_by_rate)
 The null is that there is no significant difference between the mean anxiety trends of states with low COVID cases, medium COVID cases, and high COVID cases. The alternate hypothesis is that there exists at least one mean that is different. Assuming the null hypothesis is true, the model follows an F distribution with a df of 2. The F-statistic is 3.826, and the corresponding p-value is 0.0287. Therefore, we can reject the null under the alpha = 0.05 significance level. There is  enough evidence to suggest that there is at least one difference in mean anxiety trends of states with low, medium, and high COVID cases.
 
 ### Restrictions vs. anxiety
+```{r restriction-anxiety-assumptions, echo = FALSE}
+ggplot(data = covidrate, mapping = aes(x = anxiety)) +
+  geom_histogram(color = "cornsilk2", fill = "hotpink4", binwidth = 1)+
+  facet_grid(restriction_cat~.) +
+  labs(title = "anxiety search trends for all restriction levels do not have normal distributions", 
+       x = "anxiety searches", 
+       y = "number of states")
+```
+Looking at the graphs, outcomes within groups are not normally distributed for any level of COVID cases, so this assumption is not satisfied. It also looks like the within-group variance among all groups is not the same, so the assumption for homoscedastic variance is not satisfied. The samples are also not independent because states with similar values that live close to each other my have similar anxiety search trends. The assumptions for ANOVA are not satisfied. 
+
 ```{r ANOVA-test-restriction-anxiety, echo = FALSE}
 a_restriction_by_case <- aov(anxiety ~ restriction_cat, data = covidrate)
 summary(a_restriction_by_case)
