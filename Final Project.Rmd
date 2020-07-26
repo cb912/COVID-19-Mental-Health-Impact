@@ -243,8 +243,8 @@ The above boxplot shows that the states with the highest COVID-related restricti
 
 ```{r interaction}
 covidrate %>%
-mutate(Status= case_when(restriction_cat=="high" & case_cat=="high" ~ "Status A"))
-
+mutate(Status= case_when(restriction_cat=="high" & case_cat=="high" ~ "Status A"))  %>%
+select(State, Status, anxiety)
 ```
 #### Are people more anxious of COVID or restrictions?
 
