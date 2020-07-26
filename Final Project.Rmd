@@ -239,14 +239,23 @@ covidrate %>%
 
 The above boxplot shows that the states with the highest COVID-related restrictions also record the highest google searches for anxiety compared to the states with low or moderate COVID-related restrictions. We notice that the highlighted box corresponding to the high restrictions states shows the highest median (approximately 87 compared to 78 and 79) and the highest maximum (approximately 97) and minimum (Approximately 76) upon excluding the extreme outliers in the medium group. 
 
-#### Are states with the most restrictions and the most covid cases the most anxious? 
+#### Regression Model 
+
+The plots above show a positive correlation between both the new COVID-19 cases and the severity of restrictions with google searches for anxiety relative to state. However, we're yet to find out which variable have the stronger correlation. In other words, are people more anxious of new COVID cases or COVID-related restrictions? 
+
+```{r regression}
+mod1 <- lm(anxiety ~  + New.COVID.cases.per.100.000.in.April + restriction, data = covidrate)
+library(broom)
+tidy(mod1)
+```
+
 
 ```{r interaction}
 covidrate %>%
 mutate(Status= case_when(restriction_cat=="high" & case_cat=="high" ~ "Status A"))  %>%
 select(State, Status, anxiety)
 ```
-#### Are people more anxious of COVID or restrictions?
+
 
 
 
