@@ -174,8 +174,8 @@ ggplot(data = covidrate, mapping = aes(x = New.COVID.cases.per.100.000.in.April,
 
 ```{r}
 ggplot(data = covidrate, mapping = aes(x = New.COVID.cases.per.100.000.in.April, y = anxiety)) +
-  geom_point(color = "orange") +
-  labs(title = "Curvilinear?", 
+  geom_point(color= "orange") + facet_grid(party~.) + 
+  labs(title = "No trend", 
        x = "COVID-19 infection rate (per 100,000) ", 
        y = "Google searches for anxiety (relative to state)" )
 ```
@@ -184,7 +184,7 @@ ggplot(data = covidrate, mapping = aes(x = New.COVID.cases.per.100.000.in.April,
 #### Effect of severity of restrictions on depression/anxiety rates in each State
 
 ```{r restrictions depression}
-ggplot(data = covidrate, mapping = aes(x = restriction_cat, y = depression)) + 
+ggplot(data = covidrate, mapping = aes(x = restriction_cat, y = depression, fill= restriction_cat)) + 
   geom_boxplot() + 
   labs(title = "Higher restrictions associated with lower depression", 
        x = "Restrictions", 
@@ -192,7 +192,7 @@ ggplot(data = covidrate, mapping = aes(x = restriction_cat, y = depression)) +
 ```
 
 ```{r restrrictionsanxiety}
-ggplot(data = covidrate, mapping = aes(x = restriction_cat, y = anxiety)) + 
+ggplot(data = covidrate, mapping = aes(x = restriction_cat, y = anxiety, fill= restriction_cat)) + 
   geom_boxplot() + 
   labs(title = "Higher restrictions associated with higher anxiety", 
        x = "Restrictions", 
@@ -203,8 +203,16 @@ ggplot(data = covidrate, mapping = aes(x = restriction_cat, y = anxiety)) +
 #### How does the severity of restrictions affect the relationship between anxiety and COVID rates in the 50 states 
 
 ```{r COVIDRESTRICTIONS}
-
+ggplot(data = covidrate, mapping = aes(x = New.COVID.cases.per.100.000.in.April, y = depression)) +
+  geom_line() + 
+  geom_point() + 
+  labs(title = "Obesity by State", 
+       x = "State", 
+       y = "Adult Obesity (%)")
 ```
 
 
+```{r}
+
+```
 
