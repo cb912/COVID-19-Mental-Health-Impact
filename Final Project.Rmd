@@ -73,7 +73,7 @@ trends <- trends %>%
 
 ```{r covid-depression-assumptions, echo = FALSE}
 ggplot(data = trends, mapping = aes(x = depression)) +
-  geom_histogram(color = "dodgerblue", fill = "lightsteelblue", binwidth = 3)+
+  geom_histogram(color = "dodgerblue", fill = "lightsteelblue", binwidth = 4)+
   facet_grid(case_cat~.) +
   labs(title = "Depression search trends for states with high COVID cases has a normal distribution?", 
        x = "depression searches", 
@@ -105,7 +105,7 @@ ggplot(data = trends, mapping = aes(x = depression)) +
        x = "depression searches", 
        y = "number of states")
 ```
-Looking at the graphs, outcomes within groups are not normally distributed for low and medium restriction level states, so this assumption is not satisfied. It also looks like the within-group variance among all groups is not the same, so the assumption for homoscedastic variance is not satisfied. The samples are also not independent because states with similar values that live close to each other my have similar anxiety search trends. The assumptions for ANOVA are not satisfied. 
+Looking at the graphs, outcomes within groups are not normally distributed for low and medium restriction level states, so this assumption is not satisfied. It also looks like the within-group variance among all groups is not the same, so the assumption for homoscedastic variance is not satisfied. The samples are also not independent because states with similar values that live close to each other may have similar anxiety search trends. The assumptions for ANOVA are not satisfied. 
 
 ```{r ANOVA-test-restriction-depression, echo = FALSE}
 restriction_by_case <- aov(depression ~ restriction_cat, data = trends)
@@ -177,7 +177,7 @@ ggplot(data = trends, mapping = aes(x = anxiety)) +
        x = "anxiety searches", 
        y = "number of states")
 ```
-Looking at the graphs, outcomes within groups are not normally distributed for any level of COVID cases, so this assumption is not satisfied. It also looks like the within-group variance among all groups is not the same, so the assumption for homoscedastic variance is not satisfied. The samples are also not independent because states with similar values that live close to each other my have similar anxiety search trends. The assumptions for ANOVA are not satisfied. 
+Looking at the graphs, outcomes within groups are not normally distributed for any level of COVID cases, so this assumption is not satisfied. It also looks like the within-group variance among all groups is not the same, so the assumption for homoscedastic variance is not satisfied. The samples are also not independent because states with similar values that live close to each other may have similar anxiety search trends. The assumptions for ANOVA are not satisfied. 
 
 ```{r ANOVA-test-restriction-anxiety, echo = FALSE}
 a_restriction_by_case <- aov(anxiety ~ restriction_cat, data = trends)
