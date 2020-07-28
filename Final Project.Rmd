@@ -197,7 +197,8 @@ plot_usmap(data = dstate, values = "depression", color = "black") +
 
 #### Nour Visuals 
 
-#### Effect of COVID on depression rates in each State 
+#### New COVID-19 cases association with depression rates among states 
+
 ```{r depressionVScovid}
 ggplot(trends, aes(New.COVID.cases.per.100.000.in.April, depression)) +
   geom_point(shape=1) +
@@ -210,7 +211,8 @@ The above scatterplot shows the relative google searches for depression among th
 The line of best fit (in blue) is horizontal with R = approximately zero. Thus, we cannot see any correlation between the new COVID-19 cases and the google searches for depression for the month of april.  
 
 
-#### Effect of COVID on anxiety rates in each State 
+#### New COVID-19 cases association with anxiety rates among states 
+
 ```{r anxietyVScovid}
 ggplot(trends, aes(New.COVID.cases.per.100.000.in.April, anxiety)) +
   geom_point(shape=1) +
@@ -223,7 +225,7 @@ ggplot(trends, aes(New.COVID.cases.per.100.000.in.April, anxiety)) +
 The above scatterplot shows the relative google searches for anxiety among the 50 american states as a function of new COVID-19 cases per 100,000 during the month of april, 2020.
 The line of best fit (in blue) has a positive slope. Thus, we can conclude that there's a correlation between anxiety searches and new COVID cases during the month of april. The more new COVID cases a state records, the higher anxiety searches it's expected to have.  
 
-#### Restrictions effect on anxiety rates 
+#### Restrictions association with anxiety rates among states
 
 ```{r anxietyVSrestrictions}
 trends %>% 
@@ -241,7 +243,7 @@ The above boxplot shows that the states with the highest COVID-related restricti
 
 #### Regression Model 
 
-The plots above show a positive correlation between both the new COVID-19 cases and the severity of restrictions with google searches for anxiety relative to state. However, we're yet to find out which variable have the stronger correlation. In other words, are people more anxious of new COVID cases or COVID-related restrictions? 
+The plots above show a positive correlation between both the new COVID-19 cases and the severity of restrictions with google searches for anxiety relative to state. However, we're yet to find out whether this correlation is significant. 
 
 ```{r regression}
 Anxiety_regression <- lm(anxiety ~ New.COVID.cases.per.100.000.in.April + restriction, data = trends)
