@@ -248,9 +248,34 @@ The plots above show a positive correlation between both the new COVID-19 cases 
 Anxiety_regression <- lm(anxiety ~ New.COVID.cases.per.100.000.in.April + restriction, data = covidrate)
 tidy(Anxiety_regression)
 ```
-The above chart supports our previous conclusions. The slope estimate corresponding to new covid cases per 100,000 in the month of april is 0.007794587. This means that for each additional increase in new COVID-19 cases, we would expect a 0.007794587 unit increase in anxiety score, holding restrictions constant. Similarly, the slope estimate corresponding to restrictions is also positive 0.143335319. This means that for each additional increase restrictions rank, we would expect a 0.143335319 unit increase in anxiety score, holding new COVID-19 cases constant. Both predictive values show a p-value smaller than 0.05 which means that these data are statistically significant. 
+The above chart supports the positive correlations we found earlier. The slope estimate corresponding to new covid cases per 100,000 in the month of april is 0.007794587. This means that for each additional increase in new COVID-19 cases, we would expect a 0.007794587 unit increase in anxiety score, holding restrictions constant. Similarly, the slope estimate corresponding to restrictions is also positive 0.143335319. This means that for each additional increase restrictions rank, we would expect a 0.143335319 unit increase in anxiety score, holding new COVID-19 cases constant. 
+The p-value corresponding to the estimated slope of restrictions is approximately 0.047, which is less than our significant level of 0.05. Thus, the positive correlation between restrictions and google searches corresponding to anxiety is statistically significant. On the other hand, the p-value corresponding to the estimated slope of new COVID-19 cases per 100,000 is approximately 0.067, which is higher than our significant level of 0.05. Thus, the positive correlation between new COVID-19 cases per 100,000 and google searches corresponding to anxiety is not statistically significant.
+
+#### Assumptions for the above regression model 
+
+1. Independence: the independence assumption does not hold in the above model because one observation directly affects others; for instance, states that share a similar culture, for example states of the Deep South, record similar anxiety rates. Also, since COVID-19 is an infectious disease, states in the same geographic region affect one another. In addition, states of the same political affiliation probably have similar restriction laws. 
+
+2. Normal distribution of residuals: The histogram of the residuals demonstrates that normality is violated, since the distribution is right-skewed. 
+
+```{r histo}
+ggplot(data = Anxiety_regression, mapping = aes(x = .resid)) + 
+  geom_histogram(binwidth = 3) + 
+  labs(x = "Residuals", y = "Count",
+       title = "Residuals are right-skewed")
 
 ```
+
+```{r scatplot}
+ggplot(data = Anxiety_regression, mapping = aes(x = .fitted, y = .resid)) + 
+  geom_point() + 
+  labs(x = "Fitted values", y = "Residuals",
+       title = "Residual plot shows a pattern")
+```
+
+3.Linearity 4. Constant variance 
+
+The residual plot suggests that both the linearty and constant variance assumptions are violated; the residual plot is not symmetric about the x-axis and the dots are closer to each other below the x-axis and are more scattered above it. 
+
 
 
 
