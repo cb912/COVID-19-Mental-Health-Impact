@@ -21,8 +21,7 @@ dtrends2020 = read.xls("data/April 2020 depression trends.xls")
 dtrends2018 = read.xls("data/April 2018 depression trends.xls")
 atrends2020 = read.xls("data/April 2020 anxiety trends.xls")
 atrends2018 = read.xls("data/April 2018 anxiety trends.xls")
-restrictions = read.csv("data/restriction rankings.csv")
-covidrate = read.xls("data/all_data.xls")
+trends = read.xls("data/all_data.xls")
 ```
 
 ### Comparing depression trends between April 2020 and April 2018
@@ -64,7 +63,7 @@ The null hypothesis is that there is no difference in the mean amount of depress
 
 ### COVID cases vs. depression rate
 ```{r variables, echo = FALSE}
-covidrate <- covidrate %>%
+trends <- trends %>%
   mutate(case_cat = case_when(
     New.COVID.cases.per.100.000.in.April <= 91 ~ "low",
     New.COVID.cases.per.100.000.in.April > 91 & New.COVID.cases.per.100.000.in.April < 200 ~ "medium",
@@ -73,7 +72,7 @@ covidrate <- covidrate %>%
 ```
 
 ```{r covid-depression-assumptions, echo = FALSE}
-ggplot(data = covidrate, mapping = aes(x = depression)) +
+ggplot(data = trends, mapping = aes(x = depression)) +
   geom_histogram(color = "dodgerblue", fill = "lightsteelblue", binwidth = 3)+
   facet_grid(case_cat~.) +
   labs(title = "Depression search trends for states with high COVID cases has a normal distribution?", 
@@ -83,14 +82,14 @@ ggplot(data = covidrate, mapping = aes(x = depression)) +
 The outcomes within each group is not normal. The depression search trends for states with medium numbers of COVID cases and low numbers of COVID cases do not have a normal distribution, and n<30. Therefore, this assumption is not satisfied. By looking at the graphs, it also seems that there is not equal variance among each group, not satisfying the assumption of homoscedastic variance. In addition, these samples may not all be independent. Some states may have the same values/cultures as others, causing the people who live in each state to react to the virus similarly to each other and affecting the depression searches within those states. Therefore, the assumptions for ANOVA are not satisfied. 
 
 ```{r ANOVA-test-depression-covid, echo = FALSE}
-death_by_case <- aov(depression ~ case_cat, data = covidrate)
+death_by_case <- aov(depression ~ case_cat, data = trends)
 summary(death_by_case)
 ```
 The null is that there is no significant difference between the mean depression trends of states with low COVID cases, medium COVID cases, and high COVID cases. The alternate hypothesis is that there exists at least one mean that is different. Assuming the null hypothesis is true, the model follows an F distribution with a df of 2. The F-statistic is 1.334, and the corresponding p-value is 0.273. Therefore, we can not reject the null under the alpha = 0.05 significance level. There is not enough evidence to suggest that there is at least one difference in mean depression trends of states with low, medium, and high COVID cases.
 
 ### Restrictions vs. depression
 ```{r restrictions-depression, echo = FALSE}
-covidrate <- covidrate %>%
+trends <- trends %>%
   mutate(restriction_cat = case_when(
     restriction <= 15 ~ "low",
     restriction >= 15 & restriction <= 33 ~ "medium",
@@ -99,7 +98,7 @@ covidrate <- covidrate %>%
 ```
 
 ```{r restriction-depression-assumptions, echo = FALSE}
-ggplot(data = covidrate, mapping = aes(x = depression)) +
+ggplot(data = trends, mapping = aes(x = depression)) +
   geom_histogram(color = "lavender", fill = "mediumpurple", binwidth = 3)+
   facet_grid(restriction_cat~.) +
   labs(title = "Depression search trends for states with high restrictions has a normal distribution", 
@@ -109,7 +108,7 @@ ggplot(data = covidrate, mapping = aes(x = depression)) +
 Looking at the graphs, outcomes within groups are not normally distributed for low and medium restriction level states, so this assumption is not satisfied. It also looks like the within-group variance among all groups is not the same, so the assumption for homoscedastic variance is not satisfied. The samples are also not independent because states with similar values that live close to each other my have similar anxiety search trends. The assumptions for ANOVA are not satisfied. 
 
 ```{r ANOVA-test-restriction-depression, echo = FALSE}
-restriction_by_case <- aov(depression ~ restriction_cat, data = covidrate)
+restriction_by_case <- aov(depression ~ restriction_cat, data = trends)
 summary(restriction_by_case)
 
 ```
@@ -154,7 +153,7 @@ The null hypothesis is that there is no difference in the mean amount of anxiety
 ### COVID cases vs. anxiety rate
 
 ```{r covid-anxiety-assumptions, echo = FALSE}
-ggplot(data = covidrate, mapping = aes(x = anxiety)) +
+ggplot(data = trends, mapping = aes(x = anxiety)) +
   geom_histogram(color = "darkgrey", fill = "lightcyan2", binwidth = 3)+
   facet_grid(case_cat~.) +
   labs(title = "Anxiety search trends for all levels of COVID cases do not have normal distributions", 
@@ -164,14 +163,14 @@ ggplot(data = covidrate, mapping = aes(x = anxiety)) +
 Looking at the graphs, outcomes within groups are not normally distributed for any level of COVID cases, so this assumption is not satisfied. It also looks like the within-group variance among all groups is not the same, so the assumption for homoscedastic variance is not satisfied. The samples are also not independent because states with similar values that live close to each other my have similar anxiety search trends. The assumptions for ANOVA are not satisfied. 
 
 ```{r ANOVA-test-anxiety, echo = FALSE}
-aCOVID_by_rate <- aov(anxiety ~ case_cat, data = covidrate)
+aCOVID_by_rate <- aov(anxiety ~ case_cat, data = trends)
 summary(aCOVID_by_rate)
 ```
 The null is that there is no significant difference between the mean anxiety trends of states with low COVID cases, medium COVID cases, and high COVID cases. The alternate hypothesis is that there exists at least one mean that is different. Assuming the null hypothesis is true, the model follows an F distribution with a df of 2. The F-statistic is 3.826, and the corresponding p-value is 0.0287. Therefore, we can reject the null under the alpha = 0.05 significance level. There is  enough evidence to suggest that there is at least one difference in mean anxiety trends of states with low, medium, and high COVID cases.
 
 ### Restrictions vs. anxiety
 ```{r restriction-anxiety-assumptions, echo = FALSE}
-ggplot(data = covidrate, mapping = aes(x = anxiety)) +
+ggplot(data = trends, mapping = aes(x = anxiety)) +
   geom_histogram(color = "cornsilk2", fill = "hotpink4", binwidth = 3)+
   facet_grid(restriction_cat~.) +
   labs(title = "anxiety search trends for all restriction levels do not have normal distributions", 
@@ -181,7 +180,7 @@ ggplot(data = covidrate, mapping = aes(x = anxiety)) +
 Looking at the graphs, outcomes within groups are not normally distributed for any level of COVID cases, so this assumption is not satisfied. It also looks like the within-group variance among all groups is not the same, so the assumption for homoscedastic variance is not satisfied. The samples are also not independent because states with similar values that live close to each other my have similar anxiety search trends. The assumptions for ANOVA are not satisfied. 
 
 ```{r ANOVA-test-restriction-anxiety, echo = FALSE}
-a_restriction_by_case <- aov(anxiety ~ restriction_cat, data = covidrate)
+a_restriction_by_case <- aov(anxiety ~ restriction_cat, data = trends)
 summary(a_restriction_by_case)
 ```
 The null is that there is no significant difference between the mean anxiety trends of states with low restrictions, medium restrictions, and high restrictions. The alternate hypothesis is that there exists at least one mean that is different. Assuming the null hypothesis is true, the model follows an F distribution with a df of 2. The F-statistic is 6.746, and the corresponding p-value is 0.00262. Therefore, we reject the null under the alpha = 0.05 significance level. There is enough evidence to suggest that there is at least one difference in mean anxiety trends of states with low, medium, and high restrictions.
@@ -200,7 +199,7 @@ plot_usmap(data = dstate, values = "depression", color = "black") +
 
 #### Effect of COVID on depression rates in each State 
 ```{r depressionVScovid}
-ggplot(covidrate, aes(New.COVID.cases.per.100.000.in.April, depression)) +
+ggplot(trends, aes(New.COVID.cases.per.100.000.in.April, depression)) +
   geom_point(shape=1) +
    geom_smooth(method=lm) +
   labs(title = "No correlation", 
@@ -213,7 +212,7 @@ The line of best fit (in blue) is horizontal with R = approximately zero. Thus, 
 
 #### Effect of COVID on anxiety rates in each State 
 ```{r anxietyVScovid}
-ggplot(covidrate, aes(New.COVID.cases.per.100.000.in.April, anxiety)) +
+ggplot(trends, aes(New.COVID.cases.per.100.000.in.April, anxiety)) +
   geom_point(shape=1) +
    geom_smooth(method=lm) +
   labs(title = "More COVID cases assosciated with higher anxiety", 
@@ -227,7 +226,7 @@ The line of best fit (in blue) has a positive slope. Thus, we can conclude that 
 #### Restrictions effect on anxiety rates 
 
 ```{r anxietyVSrestrictions}
-covidrate %>% 
+trends %>% 
   mutate( type=ifelse(restriction_cat=="high","Highlighted","Normal")) %>% ggplot( aes(x=restriction_cat, y=anxiety, fill=type, alpha=type)) + 
     geom_boxplot() +
     scale_fill_manual(values=c("#69b3a2", "grey")) +
@@ -245,7 +244,7 @@ The above boxplot shows that the states with the highest COVID-related restricti
 The plots above show a positive correlation between both the new COVID-19 cases and the severity of restrictions with google searches for anxiety relative to state. However, we're yet to find out which variable have the stronger correlation. In other words, are people more anxious of new COVID cases or COVID-related restrictions? 
 
 ```{r regression}
-Anxiety_regression <- lm(anxiety ~ New.COVID.cases.per.100.000.in.April + restriction, data = covidrate)
+Anxiety_regression <- lm(anxiety ~ New.COVID.cases.per.100.000.in.April + restriction, data = trends)
 tidy(Anxiety_regression)
 ```
 The above chart supports the positive correlations we found earlier. The slope estimate corresponding to new covid cases per 100,000 in the month of april is 0.007794587. This means that for each additional increase in new COVID-19 cases, we would expect a 0.007794587 unit increase in anxiety score, holding restrictions constant. Similarly, the slope estimate corresponding to restrictions is also positive 0.143335319. This means that for each additional increase restrictions rank, we would expect a 0.143335319 unit increase in anxiety score, holding new COVID-19 cases constant. 
