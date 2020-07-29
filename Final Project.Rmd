@@ -45,7 +45,7 @@ ggplot(data = dtrends2020, mapping = aes(x = depression)) +
 ```
 n<30 and not normal distribution: assumption for t-test not satisfied
 
-The assumptions for the two-sample t-test is not satisfied, so we decided to try the Wilcox signed-rank test instead. 
+The assumptions for the two-sample t-test is not satisfied, so we decided use the Wilcox signed-rank test instead. 
 ```{r, depression-year-analysis, echo = FALSE}
 d2020 <- dtrends2020 %>% 
   select(depression) %>% 
@@ -131,7 +131,7 @@ ggplot(data = trends, mapping = aes(x = depression)) +
 ```
 The outcomes within each group is not normal. The depression search trends for states with medium numbers of COVID cases and low numbers of COVID cases do not have a normal distribution, and n<30. Therefore, this assumption is not satisfied. By looking at the graphs, it also seems that there is not equal variance among each group, not satisfying the assumption of homoscedastic variance. In addition, these samples may not all be independent. Some states may have the same values/cultures as others, causing the people who live in each state to react to the virus similarly to each other and affecting the depression searches within those states. Because the assumptions for ANOVA is not satisfied, we decided to use the Kruskal-Wallis test despite the data not being independent.
 
-```{r ANOVA-test-depression-covid, echo = FALSE}
+```{r KW-test-depression-covid, echo = FALSE}
 kruskal.test(depression ~ case_cat, data = trends)
 ```
 
@@ -164,7 +164,7 @@ Looking at the graphs, outcomes within groups are not normally distributed for a
 ```{r KW-test-anxiety-covid, echo = FALSE}
 kruskal.test(anxiety ~ case_cat, data = trends)
 ```
-The null is that there is no significant difference between the mean anxiety trends of states with low COVID cases, medium COVID cases, and high COVID cases. The alternate hypothesis is that there exists at least one mean that is different. Assuming the null hypothesis is true, the model follows an F distribution with a df of 2. The chi square statistic is 3.826, and the corresponding p-value is 0.0287. Therefore, we can reject the null under the alpha = 0.05 significance level. There is  enough evidence to suggest that there is at least one difference in mean anxiety trends of states with low, medium, and high COVID cases.
+The null is that there is no significant difference between the median anxiety trends of states with low COVID cases, medium COVID cases, and high COVID cases. The alternate hypothesis is that there exists at least one median that is different. Assuming the null hypothesis is true, the model follows a chi-square distribution with a df of 2. The chi square statistic is 7.425, and the corresponding p-value is 0.0242. Therefore, we can reject the null under the alpha = 0.05 significance level. There is  enough evidence to suggest that there is at least one difference in median anxiety trends of states with low, medium, and high COVID cases.
 
 Since the overall Kruskal-Wallis test was significant, we then performed step down to identify where the differences are. The appropriate stepdown test is the Wilcox rank sum test. To account for multiple comparison, we will perform the Bonferroni correction and assess our results.
 
