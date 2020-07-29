@@ -24,7 +24,9 @@ atrends2018 = read.xls("data/April 2018 anxiety trends.xls")
 trends = read.xls("data/all_data.xls")
 ```
 
-### Comparing depression trends between April 2020 and April 2018
+# Question 1: Does COVID have a significant effect on depression and anxiety levels in the US?
+
+## "Depression" searches in April 2018 vs. April 2020
 ```{r depression-assumptions-2018, echo = FALSE}
 ggplot(data = dtrends2018, mapping = aes(x = depression)) +
   geom_histogram(color = "snow3", fill = "mediumaquamarine", binwidth = 1)+ 
@@ -59,10 +61,60 @@ t.test(d2020, d2018, mu = 0,
        conf.level = 0.95)
 ```
 
-The null hypothesis is that there is no difference in the mean amount of depression searches in the US between the times of April 2020 and April 2018. The alternate hypothesis is that there is a difference between the two means. Assuming that the null hypothesis is true, the model follows a t-distribution. The t-statistic is 0.755 and the df = 29. This corresponds to a p-value of 0.4561. We cannot reject the null at the alpha = 0.05 level. We do not have enough evidence to claim that there is a difference in the mean amount of depression searches in the US between the times of April 2020 and April 2018. 
+The null hypothesis is that there is no difference in the mean amount of depression searches in the US between the times of April 2020 and April 2018. The alternate hypothesis is that there is a difference between the two means. Assuming that the null hypothesis is true, the model follows a t-distribution. The t-statistic is 0.755 and the df = 29. This corresponds to a p-value of 0.4561. We cannot reject the null at the alpha = 0.05 level. We do not have enough evidence to claim that there is a difference in the mean amount of depression searches in the US between the times of April 2020 and April 2018.
 
-### COVID cases vs. depression rate
-```{r variables, echo = FALSE}
+## "Anxiety" searches in April 2018 vs. April 2020
+```{r anxiety-assumptions-2018}
+ggplot(data = atrends2018, mapping = aes(x = anxiety)) +
+  geom_histogram(color = "snow3", fill = "cornflowerblue", binwidth = 1)+ 
+  labs(title = "anxiety searches by week in April 2020 are normally distributed", 
+       x = "anxiety searches", 
+       y = "number of weeeks")
+```
+n<30, but has a normal distribution : assumption satisfied
+
+```{r anxiety-assumptions-2020}
+ggplot(data = atrends2020, mapping = aes(x = anxiety)) +
+  geom_histogram(color = "snow3", fill = "lightsteelblue", binwidth = 1)+ 
+  labs(title = "anxiety searches by week in April 2020 are not normally distributed", 
+       x = "anxiety searches", 
+       y = "number of weeeks")
+```
+n<30 and not normal distribution: assumption not satisfied
+
+```{r anxiety-year-analysis, echo = FALSE}
+a2020 <- atrends2020 %>% 
+  select(anxiety) %>% 
+  pull()
+
+a2018 <- atrends2018 %>% 
+  select(anxiety) %>% 
+  pull()
+
+t.test(a2020, a2018, mu = 0, 
+       alternative = "two.sided", 
+       paired = TRUE, 
+       var.equal = FALSE,
+       conf.level = 0.95)
+```
+The null hypothesis is that there is no difference in the mean amount of anxiety searches in the US between the times of April 2020 and April 2018. The alternate hypothesis is that there is a difference between the two means. Assuming that the null hypothesis is true, the model follows a t-distribution. The t-statistic is 1.66 and the df = 29. This corresponds to a p-value of 0.1086. We cannot reject the null at the alpha = 0.05 level. We do not have enough evidence to claim that there is a difference in the mean amount of anxiety searches in the US between the times of April 2020 and April 2018. 
+
+# Question 2: Does the level of COVID cases per US state have an effect on depression and anxiety levels?
+
+## Association between "depression" searches and new COVID-19 cases per 100,000 residents in April 2020 
+```{r depressionVScovid, echo = FALSE}
+ggplot(trends, aes(New.COVID.cases.per.100.000.in.April, depression)) +
+  geom_point(shape=1) +
+   geom_smooth(method=lm) +
+  labs(title = "No correlation", 
+       x = "New COVID-19 cases (per 100,000) ", 
+       y = "Google searches for depression (relative to state)" )
+```
+The above scatterplot shows the relative google searches for depression among the 50 American states as a function of new COVID-19 cases per 100,000 during the month of april, 2020.
+The line of best fit (in blue) is horizontal with R = approximately zero. Thus, we cannot see any correlation between the new COVID-19 cases and the Google searches for depression for the month of April.
+
+## COVID cases vs. depression rate
+```{r set-covid-cat, echo = FALSE}
 trends <- trends %>%
   mutate(case_cat = case_when(
     New.COVID.cases.per.100.000.in.April <= 91 ~ "low",
@@ -87,71 +139,20 @@ summary(death_by_case)
 ```
 The null is that there is no significant difference between the mean depression trends of states with low COVID cases, medium COVID cases, and high COVID cases. The alternate hypothesis is that there exists at least one mean that is different. Assuming the null hypothesis is true, the model follows an F distribution with a df of 2. The F-statistic is 1.334, and the corresponding p-value is 0.273. Therefore, we can not reject the null under the alpha = 0.05 significance level. There is not enough evidence to suggest that there is at least one difference in mean depression trends of states with low, medium, and high COVID cases.
 
-### Restrictions vs. depression
-```{r restrictions-depression, echo = FALSE}
-trends <- trends %>%
-  mutate(restriction_cat = case_when(
-    restriction <= 15 ~ "low",
-    restriction >= 15 & restriction <= 33 ~ "medium",
-    restriction > 33 ~ "high"
-  ))
+## Association between "anxiety" searches and new COVID-19 cases per 100,000 residents in April 2020
+```{r anxietyVScovid, echo = FALSE}
+ggplot(trends, aes(New.COVID.cases.per.100.000.in.April, anxiety)) +
+  geom_point(shape=1) +
+   geom_smooth(method=lm) +
+  labs(title = "More COVID cases assosciated with higher anxiety", 
+       x = "COVID-19 infection rate (per 100,000) ", 
+       y = "Google searches for anxiety (relative to state)" )
 ```
 
-```{r restriction-depression-assumptions, echo = FALSE}
-ggplot(data = trends, mapping = aes(x = depression)) +
-  geom_histogram(color = "lavender", fill = "mediumpurple", binwidth = 3)+
-  facet_grid(restriction_cat~.) +
-  labs(title = "Depression search trends for states with high restrictions has a normal distribution", 
-       x = "depression searches", 
-       y = "number of states")
-```
-Looking at the graphs, outcomes within groups are not normally distributed for low and medium restriction level states, so this assumption is not satisfied. It also looks like the within-group variance among all groups is not the same, so the assumption for homoscedastic variance is not satisfied. The samples are also not independent because states with similar values that live close to each other may have similar anxiety search trends. The assumptions for ANOVA are not satisfied. 
+The above scatterplot shows the relative google searches for anxiety among the 50 american states as a function of new COVID-19 cases per 100,000 during the month of april, 2020.
+The line of best fit (in blue) has a positive slope. Thus, we can conclude that there's a correlation between anxiety searches and new COVID cases during the month of april. The more new COVID cases a state records, the higher anxiety searches it's expected to have. 
 
-```{r ANOVA-test-restriction-depression, echo = FALSE}
-restriction_by_case <- aov(depression ~ restriction_cat, data = trends)
-summary(restriction_by_case)
-
-```
-The null is that there is no significant difference between the mean depression trends of states with low restrictions, medium restrictions, and high restrictions. The alternate hypothesis is that there exists at least one mean that is different. Assuming the null hypothesis is true, the model follows an F distribution with a df of 2. The F-statistic is 0.516, and the corresponding p-value is 0.6. Therefore, we can not reject the null under the alpha = 0.05 significance level. There is not enough evidence to suggest that there is at least one difference in mean depression trends of states with low, medium, and high restrictions.
-
-### Comparing anxiety trends in April 2020 to April 2018
-```{r anxiety-assumptions-2018}
-ggplot(data = atrends2018, mapping = aes(x = anxiety)) +
-  geom_histogram(color = "snow3", fill = "cornflowerblue", binwidth = 1)+ 
-  labs(title = "anxiety searches by week in April 2020 are normally distributed", 
-       x = "anxiety searches", 
-       y = "number of weeeks")
-```
-n<30, but has a normal distribution?? : assumption satisfied
-
-```{r anxiety-assumptions-2020}
-ggplot(data = atrends2020, mapping = aes(x = anxiety)) +
-  geom_histogram(color = "snow3", fill = "lightsteelblue", binwidth = 1)+ 
-  labs(title = "anxiety searches by week in April 2020 are not normally distributed", 
-       x = "anxiety searches", 
-       y = "number of weeeks")
-```
-n<30 and not normal distribution: assumption not satisfied
-
-```{r, echo = FALSE}
-a2020 <- atrends2020 %>% 
-  select(anxiety) %>% 
-  pull()
-
-a2018 <- atrends2018 %>% 
-  select(anxiety) %>% 
-  pull()
-
-t.test(a2020, a2018, mu = 0, 
-       alternative = "two.sided", 
-       paired = TRUE, 
-       var.equal = FALSE,
-       conf.level = 0.95)
-```
-The null hypothesis is that there is no difference in the mean amount of anxiety searches in the US between the times of April 2020 and April 2018. The alternate hypothesis is that there is a difference between the two means. Assuming that the null hypothesis is true, the model follows a t-distribution. The t-statistic is 1.66 and the df = 29. This corresponds to a p-value of 0.1086. We cannot reject the null at the alpha = 0.05 level. We do not have enough evidence to claim that there is a difference in the mean amount of anxiety searches in the US between the times of April 2020 and April 2018. 
-
-### COVID cases vs. anxiety rate
-
+## COVID cases vs. anxiety rate
 ```{r covid-anxiety-assumptions, echo = FALSE}
 ggplot(data = trends, mapping = aes(x = anxiety)) +
   geom_histogram(color = "darkgrey", fill = "lightcyan2", binwidth = 3)+
@@ -162,7 +163,7 @@ ggplot(data = trends, mapping = aes(x = anxiety)) +
 ```
 Looking at the graphs, outcomes within groups are not normally distributed for any level of COVID cases, so this assumption is not satisfied. It also looks like the within-group variance among all groups is not the same, so the assumption for homoscedastic variance is not satisfied. The samples are also not independent because states with similar values that live close to each other my have similar anxiety search trends. The assumptions for ANOVA are not satisfied. 
 
-```{r ANOVA-test-anxiety, echo = FALSE}
+```{r ANOVA-test-anxiety-covid, echo = FALSE}
 aCOVID_by_rate <- aov(anxiety ~ case_cat, data = trends)
 summary(aCOVID_by_rate)
 ```
@@ -202,9 +203,38 @@ t.test(med_covid, high_covid, mu = 0,
        var.equal = FALSE,
        conf.level = 0.95)
 ```
+Because the ANOVA test was significant, we performed a step down test to identify where the differences in mean are. The appropriate step down test was the 
 
+# Question3: Does the level of restriction in US states have an effect on depression and anxiety levels?
 
-### Restrictions vs. anxiety
+## Restrictions vs. state depression trends
+```{r restrictions-depression, echo = FALSE}
+trends <- trends %>%
+  mutate(restriction_cat = case_when(
+    restriction <= 15 ~ "low",
+    restriction >= 15 & restriction <= 33 ~ "medium",
+    restriction > 33 ~ "high"
+  ))
+```
+
+```{r restriction-depression-assumptions, echo = FALSE}
+ggplot(data = trends, mapping = aes(x = depression)) +
+  geom_histogram(color = "lavender", fill = "mediumpurple", binwidth = 3)+
+  facet_grid(restriction_cat~.) +
+  labs(title = "Depression search trends for states with high restrictions has a normal distribution", 
+       x = "depression searches", 
+       y = "number of states")
+```
+Looking at the graphs, outcomes within groups are not normally distributed for low and medium restriction level states, so this assumption is not satisfied. It also looks like the within-group variance among all groups is not the same, so the assumption for homoscedastic variance is not satisfied. The samples are also not independent because states with similar values that live close to each other may have similar anxiety search trends. The assumptions for ANOVA are not satisfied. 
+
+```{r ANOVA-test-restriction-depression, echo = FALSE}
+restriction_by_case <- aov(depression ~ restriction_cat, data = trends)
+summary(restriction_by_case)
+
+```
+The null is that there is no significant difference between the mean depression trends of states with low restrictions, medium restrictions, and high restrictions. The alternate hypothesis is that there exists at least one mean that is different. Assuming the null hypothesis is true, the model follows an F distribution with a df of 2. The F-statistic is 0.516, and the corresponding p-value is 0.6. Therefore, we can not reject the null under the alpha = 0.05 significance level. There is not enough evidence to suggest that there is at least one difference in mean depression trends of states with low, medium, and high restrictions.
+
+## Restrictions vs. state anxiety trends
 ```{r restriction-anxiety-assumptions, echo = FALSE}
 ggplot(data = trends, mapping = aes(x = anxiety)) +
   geom_histogram(color = "cornsilk2", fill = "hotpink4", binwidth = 3)+
@@ -221,59 +251,8 @@ summary(a_restriction_by_case)
 ```
 The null is that there is no significant difference between the mean anxiety trends of states with low restrictions, medium restrictions, and high restrictions. The alternate hypothesis is that there exists at least one mean that is different. Assuming the null hypothesis is true, the model follows an F distribution with a df of 2. The F-statistic is 6.746, and the corresponding p-value is 0.00262. Therefore, we reject the null under the alpha = 0.05 significance level. There is enough evidence to suggest that there is at least one difference in mean anxiety trends of states with low, medium, and high restrictions.
 
-### Depression rate in each state map
-```{r graph, echo = FALSE}
-library(usmap)
-library(ggplot2)
-
-plot_usmap(data = dstate, values = "depression", color = "black") + 
-  scale_fill_gradient(name = "depression searches", low = "azure1", high ="cadetblue4") +
-  theme(legend.position = "right") +
-  labs(title = "depression search trends in US states")
-```
-
-
-### Depression rate in each state map
-```{r agraph, echo = FALSE}
-plot_usmap(data = astate, values = "anxiety", color = "black") + 
-  scale_fill_gradient(name = "anxiety searches", low = "azure1", high ="darkseagreen4") +
-  theme(legend.position = "right") +
-  labs(title = "anxiety search trends in US states")
-```
-
-#### Nour Visuals 
-
-#### New COVID-19 cases association with depression rates among states 
-
-```{r depressionVScovid}
-ggplot(trends, aes(New.COVID.cases.per.100.000.in.April, depression)) +
-  geom_point(shape=1) +
-   geom_smooth(method=lm) +
-  labs(title = "No correlation", 
-       x = "New COVID-19 cases (per 100,000) ", 
-       y = "Google searches for depression (relative to state)" )
-```
-The above scatterplot shows the relative google searches for depression among the 50 american states as a function of new COVID-19 cases per 100,000 during the month of april, 2020.
-The line of best fit (in blue) is horizontal with R = approximately zero. Thus, we cannot see any correlation between the new COVID-19 cases and the google searches for depression for the month of april.  
-
-
-#### New COVID-19 cases association with anxiety rates among states 
-
-```{r anxietyVScovid}
-ggplot(trends, aes(New.COVID.cases.per.100.000.in.April, anxiety)) +
-  geom_point(shape=1) +
-   geom_smooth(method=lm) +
-  labs(title = "More COVID cases assosciated with higher anxiety", 
-       x = "COVID-19 infection rate (per 100,000) ", 
-       y = "Google searches for anxiety (relative to state)" )
-```
-
-The above scatterplot shows the relative google searches for anxiety among the 50 american states as a function of new COVID-19 cases per 100,000 during the month of april, 2020.
-The line of best fit (in blue) has a positive slope. Thus, we can conclude that there's a correlation between anxiety searches and new COVID cases during the month of april. The more new COVID cases a state records, the higher anxiety searches it's expected to have.  
-
-#### Restrictions association with anxiety rates among states
-
-```{r anxietyVSrestrictions}
+## Association between "anxiety" searches and restriction severity in April 2020
+```{r anxietyVSrestrictions, echo = FALSE}
 trends %>% 
   mutate( type=ifelse(restriction_cat=="high","Highlighted","Normal")) %>% ggplot( aes(x=restriction_cat, y=anxiety, fill=type, alpha=type)) + 
     geom_boxplot() +
@@ -287,24 +266,17 @@ trends %>%
 
 The above boxplot shows that the states with the highest COVID-related restrictions also record the highest google searches for anxiety compared to the states with low or moderate COVID-related restrictions. We notice that the highlighted box corresponding to the high restrictions states shows the highest median (approximately 87 compared to 78 and 79) and the highest maximum (approximately 97) and minimum (Approximately 76) upon excluding the extreme outliers in the medium group. 
 
-#### Regression Model 
+# Verifying results
 
-The plots above show a positive correlation between both the new COVID-19 cases and the severity of restrictions with google searches for anxiety relative to state. However, we're yet to find out whether this correlation is significant. 
-
-```{r regression}
-Anxiety_regression <- lm(anxiety ~ New.COVID.cases.per.100.000.in.April + restriction, data = trends)
-tidy(Anxiety_regression)
-```
-The above chart supports the positive correlations we found earlier. The slope estimate corresponding to new covid cases per 100,000 in the month of april is 0.007794587. This means that for each additional increase in new COVID-19 cases, we would expect a 0.007794587 unit increase in anxiety score, holding restrictions constant. Similarly, the slope estimate corresponding to restrictions is also positive 0.143335319. This means that for each additional increase restrictions rank, we would expect a 0.143335319 unit increase in anxiety score, holding new COVID-19 cases constant. 
-The p-value corresponding to the estimated slope of restrictions is approximately 0.047, which is less than our significant level of 0.05. Thus, the positive correlation between restrictions and google searches corresponding to anxiety is statistically significant. On the other hand, the p-value corresponding to the estimated slope of new COVID-19 cases per 100,000 is approximately 0.067, which is higher than our significant level of 0.05. Thus, the positive correlation between new COVID-19 cases per 100,000 and google searches corresponding to anxiety is not statistically significant.
-
-#### Assumptions for the above regression model 
-
+## Assumptions for the regression model 
 1. Independence: the independence assumption does not hold in the above model because one observation directly affects others; for instance, states that share a similar culture, for example states of the Deep South, record similar anxiety rates. Also, since COVID-19 is an infectious disease, states in the same geographic region affect one another. In addition, states of the same political affiliation probably have similar restriction laws. 
 
 2. Normal distribution of residuals: The histogram of the residuals demonstrates that normality is violated, since the distribution is right-skewed. 
 
-```{r histo}
+```{r histo, echo = FALSE}
+Anxiety_regression <- lm(anxiety ~ New.COVID.cases.per.100.000.in.April + restriction, data = trends)
+tidy(Anxiety_regression)
+
 ggplot(data = Anxiety_regression, mapping = aes(x = .resid)) + 
   geom_histogram(binwidth = 3) + 
   labs(x = "Residuals", y = "Count",
@@ -312,7 +284,7 @@ ggplot(data = Anxiety_regression, mapping = aes(x = .resid)) +
 
 ```
 
-```{r scatplot}
+```{r scatplot, echo = FALSE}
 ggplot(data = Anxiety_regression, mapping = aes(x = .fitted, y = .resid)) + 
   geom_point() + 
   labs(x = "Fitted values", y = "Residuals",
@@ -322,6 +294,43 @@ ggplot(data = Anxiety_regression, mapping = aes(x = .fitted, y = .resid)) +
 3.Linearity 4. Constant variance 
 
 The residual plot suggests that both the linearty and constant variance assumptions are violated; the residual plot is not symmetric about the x-axis and the dots are closer to each other below the x-axis and are more scattered above it. 
+
+## Regression Model 
+The plots above show a positive correlation between both the new COVID-19 cases and the severity of restrictions with google searches for anxiety relative to state. However, we're yet to find out whether this correlation is significant. 
+
+```{r regression, echo = FALSE}
+tidy(Anxiety_regression)
+```
+The above chart supports the positive correlations we found earlier. The slope estimate corresponding to new covid cases per 100,000 in the month of april is 0.007794587. This means that for each additional increase in new COVID-19 cases, we would expect a 0.007794587 unit increase in anxiety score, holding restrictions constant. Similarly, the slope estimate corresponding to restrictions is also positive 0.143335319. This means that for each additional increase restrictions rank, we would expect a 0.143335319 unit increase in anxiety score, holding new COVID-19 cases constant. 
+The p-value corresponding to the estimated slope of restrictions is approximately 0.047, which is less than our significant level of 0.05. Thus, the positive correlation between restrictions and google searches corresponding to anxiety is statistically significant. On the other hand, the p-value corresponding to the estimated slope of new COVID-19 cases per 100,000 is approximately 0.067, which is higher than our significant level of 0.05. Thus, the positive correlation between new COVID-19 cases per 100,000 and google searches corresponding to anxiety is not statistically significant.
+
+
+# Depression rate in each state map
+```{r graph, echo = FALSE}
+library(usmap)
+library(ggplot2)
+
+plot_usmap(data = dstate, values = "depression", color = "black") + 
+  scale_fill_gradient(name = "depression searches", low = "azure1", high ="cadetblue4") +
+  theme(legend.position = "right") +
+  labs(title = "depression search trends in US states")
+```
+
+
+# Depression rate in each state map
+```{r agraph, echo = FALSE}
+plot_usmap(data = astate, values = "anxiety", color = "black") + 
+  scale_fill_gradient(name = "anxiety searches", low = "azure1", high ="darkseagreen4") +
+  theme(legend.position = "right") +
+  labs(title = "anxiety search trends in US states")
+```
+
+  
+
+
+ 
+
+
 
 
 
