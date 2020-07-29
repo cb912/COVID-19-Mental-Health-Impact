@@ -192,7 +192,17 @@ library(ggplot2)
 
 plot_usmap(data = dstate, values = "depression", color = "black") + 
   scale_fill_gradient(name = "depression searches", low = "azure1", high ="cadetblue4") +
-  theme(legend.position = "right")
+  theme(legend.position = "right") +
+  labs(title = "depression search trends in US states")
+```
+
+
+### Depression rate in each state map
+```{r agraph, echo = FALSE}
+plot_usmap(data = astate, values = "anxiety", color = "black") + 
+  scale_fill_gradient(name = "anxiety searches", low = "azure1", high ="darkseagreen4") +
+  theme(legend.position = "right") +
+  labs(title = "anxiety search trends in US states")
 ```
 
 #### Nour Visuals 
