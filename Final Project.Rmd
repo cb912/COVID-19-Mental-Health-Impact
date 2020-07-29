@@ -168,6 +168,42 @@ summary(aCOVID_by_rate)
 ```
 The null is that there is no significant difference between the mean anxiety trends of states with low COVID cases, medium COVID cases, and high COVID cases. The alternate hypothesis is that there exists at least one mean that is different. Assuming the null hypothesis is true, the model follows an F distribution with a df of 2. The F-statistic is 3.826, and the corresponding p-value is 0.0287. Therefore, we can reject the null under the alpha = 0.05 significance level. There is  enough evidence to suggest that there is at least one difference in mean anxiety trends of states with low, medium, and high COVID cases.
 
+```{r covid-ANOVA-stepdown}
+low_covid <- trends %>% 
+  filter(case_cat == "low") %>%
+  select(anxiety) %>%
+  pull()
+
+med_covid <- trends %>% 
+  filter(case_cat == "medium") %>%
+  select(anxiety) %>% 
+  pull()
+
+high_covid <- trends %>% 
+  filter(case_cat == "high") %>%
+  select(anxiety) %>% 
+  pull()
+
+t.test(low_covid, med_covid, mu = 0, 
+       alternative = "two.sided", 
+       paired = TRUE, 
+       var.equal = FALSE,
+       conf.level = 0.95)
+
+t.test(low_covid, high_covid, mu = 0, 
+       alternative = "two.sided", 
+       paired = TRUE, 
+       var.equal = FALSE,
+       conf.level = 0.95)
+
+t.test(med_covid, high_covid, mu = 0, 
+       alternative = "two.sided", 
+       paired = TRUE, 
+       var.equal = FALSE,
+       conf.level = 0.95)
+```
+
+
 ### Restrictions vs. anxiety
 ```{r restriction-anxiety-assumptions, echo = FALSE}
 ggplot(data = trends, mapping = aes(x = anxiety)) +
