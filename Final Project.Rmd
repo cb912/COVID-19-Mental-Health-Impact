@@ -143,7 +143,7 @@ ggplot(trends, aes(New.COVID.cases.per.100.000.in.April, anxiety)) +
   geom_point(shape=1) +
    geom_smooth(method=lm) +
   labs(title = "More COVID cases assosciated with higher anxiety", 
-       x = "COVID-19 infection rate (per 100,000) ", 
+       x = " New COVID-19 cases (per 100,000) ", 
        y = "Google searches for anxiety (relative to state)" )
 ```
 
