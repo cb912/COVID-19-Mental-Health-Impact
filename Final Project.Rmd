@@ -24,7 +24,7 @@ atrends2018 = read.xls("data/April 2018 anxiety trends.xls")
 trends = read.xls("data/all_data.xls")
 ```
 
-# Question 1: Does COVID have a significant effect on depression and anxiety levels in the US?
+# Question 1: Is there a difference between depression and anxiety levels pre vs. post-COVID in the US? 
 
 ## "Depression" searches in April 2018 vs. April 2020
 ```{r depression-assumptions-2018, echo = FALSE}
@@ -97,7 +97,7 @@ wilcox.test(a2020, a2018, alternative = "two.sided",
 ```
 The null hypothesis is that there is no difference in the median amount of anxiety searches in the US between the times of April 2020 and April 2018. The alternate hypothesis is that there is a difference between the two medians. Assuming that the null hypothesis is true, the model follows a z-distribution. The z-statistic is 1. This corresponds to a p-value of 0.4227. We cannot reject the null at the alpha = 0.05 level. We do not have enough evidence to claim that there is a difference in the median number of anxiety searches in the US between the times of April 2020 and April 2018. 
 
-# Question 2: Does the level of COVID cases per US state have an effect on depression and anxiety levels?
+# Question 2: Is there a relationship between the level of new COVID cases per US state and depression and anxiety levels?
 
 ## COVID cases vs. depression rate
 ```{r set-covid-cat, echo = FALSE}
@@ -141,7 +141,7 @@ The line of best fit (in blue) is horizontal with R = approximately zero. Thus, 
 ```{r covid-anxiety-assumptions, echo = FALSE}
 ggplot(data = trends, mapping = aes(x = anxiety)) +
   geom_histogram(color = "darkgrey", fill = "lightcyan2", binwidth = 3)+
-  facet_grid(case_cat~.) +
+  facet_grid(trends$case_cat~.) +
   labs(title = "Anxiety search trends for all levels of COVID cases do not have normal distributions", 
        x = "anxiety searches", 
        y = "number of states")
@@ -199,11 +199,12 @@ ggplot(trends, aes(New.COVID.cases.per.100.000.in.April, anxiety)) +
 The above scatterplot shows the relative google searches for anxiety among the 50 american states as a function of new COVID-19 cases per 100,000 during the month of april, 2020.
 The line of best fit (in blue) has a positive slope. Thus, we can conclude that there's a correlation between anxiety searches and new COVID cases during the month of april. The more new COVID cases a state records, the higher anxiety searches it's expected to have. 
 
-## Association between "anxiety" searches and COVID-19 cases in April 2020
+## Anxiety google searches vs new COVID-19 cases in April 2020
 
 ```{r COVIDcaseVSanxiety}
+trends$case_cat <-factor(trends$case_cat, levels = c("low", "medium", "high")) 
 trends %>% 
-  mutate( type=ifelse(case_cat=="high","Highlighted","Normal")) %>% ggplot( aes(x=case_cat, y=anxiety, fill=type, alpha=type)) + 
+  mutate( type=ifelse(trends$case_cat=="high","Highlighted","Normal")) %>% ggplot( aes(x=trends$case_cat, y=anxiety, fill=type, alpha=type)) + 
     geom_boxplot() +
     scale_fill_manual(values=c("#69b3a2", "grey")) +
     scale_alpha_manual(values=c(1,0.1)) +
@@ -214,7 +215,7 @@ trends %>%
 ```
 The above boxplot shows that the states with the highest COVID-19 new cases per 100,000 also record the highest google searches for anxiety compared to the states with low or moderate COVID-19 new cases. We notice that the highlighted box corresponding to the high number of new COVID-19 cases per 100,000 states shows the highest median (approximately 87 compared to approximately 79 in the low and medium groups) and the highest maximum (approximately 97) and minimum (Approximately 74) upon excluding the extreme outliers in the low group.
 
-# Question3: Does the level of restriction in US states have an effect on depression and anxiety levels?
+# Question3: Does the level of restriction in US states have a relationship with depression and anxiety levels?
 
 ## Restrictions vs. state depression trends
 ```{r restrictions-depression-cat, echo = FALSE}
@@ -229,7 +230,7 @@ trends <- trends %>%
 ```{r restriction-depression-assumptions, echo = FALSE}
 ggplot(data = trends, mapping = aes(x = depression)) +
   geom_histogram(color = "lavender", fill = "mediumpurple", binwidth = 4)+
-  facet_grid(restriction_cat~.) +
+  facet_grid(trends$restriction_cat~.) +
   labs(title = "Depression search trends for all restriction levels do not have normal distributions", 
        x = "depression searches", 
        y = "number of states")
@@ -290,10 +291,11 @@ wilcox.test(med_rest, high_rest, data = trends,
 ```
 We find that there are two pairwise differences in medians that is significant at the adjusted significance level: low restriction states and high restrictions states, and medium restriction states vs. high restriction states. For the Wilcoxon rank sum test for low restriction vs. high restriction states, the p-value = 0.00213. With the adjusted significance level is alpha = 0.05/3 = 0.0167, we reject the null at the adjusted significance level, and conclude that there is enough evidence to suggest that there is a difference in median anxiety searches of states with low restrictions and high restrictions. Similarly, the Wilcoxon rank sum test for medium restriction vs. high restriction states had a p-value = 0.00239. We reject the null at the adjusted significance level alpha = 0.05/3, and conclude that there is enough evidence to suggest that there is a difference in median anxiety searches for medium restriction vs. high restriction states.
 
-## Association between "anxiety" searches and restriction severity in April 2020
+## Anxiety Google searches vs severity of restriction in April 2020
 ```{r anxietyVSrestrictions, echo = FALSE}
-trends %>% 
-  mutate( type=ifelse(restriction_cat=="high","Highlighted","Normal")) %>% ggplot( aes(x=restriction_cat, y=anxiety, fill=type, alpha=type)) + 
+trends$restriction_cat <-factor(trends$restriction_cat , levels = c("low", "medium", "high")) 
+trends  %>% 
+  mutate( type=ifelse(trends$restriction_cat=="high","Highlighted","Normal")) %>% ggplot( aes(x=trends$restriction_cat, y=anxiety, fill=type, alpha=type)) + 
     geom_boxplot() +
     scale_fill_manual(values=c("#69b3a2", "grey")) +
     scale_alpha_manual(values=c(1,0.1)) +
@@ -306,25 +308,7 @@ trends %>%
 The above boxplot shows that the states with the highest COVID-related restrictions also record the highest Google searches for anxiety compared to the states with low or moderate COVID-related restrictions. We notice that the highlighted box corresponding to the high restrictions states shows the highest median (approximately 87 compared to 78 and 79) and the highest maximum (approximately 97) and minimum (Approximately 76) upon excluding the extreme outliers in the medium group. 
 
 
-# Depression rate in each state map
-```{r graph, echo = FALSE}
-library(usmap)
-library(ggplot2)
 
-plot_usmap(data = dstate, values = "depression", color = "black") + 
-  scale_fill_gradient(name = "depression searches", low = "azure1", high ="cadetblue4") +
-  theme(legend.position = "right") +
-  labs(title = "depression search trends in US states")
-```
-
-
-# Depression rate in each state map
-```{r agraph, echo = FALSE}
-plot_usmap(data = astate, values = "anxiety", color = "black") + 
-  scale_fill_gradient(name = "anxiety searches", low = "azure1", high ="darkseagreen4") +
-  theme(legend.position = "right") +
-  labs(title = "anxiety search trends in US states")
-```
 
   
 
