@@ -1,7 +1,7 @@
 ---
-title: "Final Project"
+title: "COVID-19 and Mental Health"
 author: "Brenda Yang, Charlie Bonetti, Nour Kanaan"
-date: "7/19/2020"
+date: "7/29/2020"
 output: pdf_document
 ---
 
@@ -27,6 +27,7 @@ trends = read.xls("data/all_data.xls")
 # Question 1: Is there a difference between depression and anxiety levels pre vs. post-COVID in the US? 
 
 ## "Depression" searches in April 2018 vs. April 2020
+
 ```{r depression-assumptions-2018, echo = FALSE}
 ggplot(data = dtrends2018, mapping = aes(x = depression)) +
   geom_histogram(color = "snow3", fill = "mediumaquamarine", binwidth = 1)+ 
@@ -34,7 +35,6 @@ ggplot(data = dtrends2018, mapping = aes(x = depression)) +
        x = "depression searches", 
        y = "Number of weeks")
 ```
-n<30 and not normal distribution: assumption for t-test not satisfied
 
 ```{r depression-assumptions-2020, echo = FALSE}
 ggplot(data = dtrends2020, mapping = aes(x = depression)) +
@@ -43,9 +43,7 @@ ggplot(data = dtrends2020, mapping = aes(x = depression)) +
        x = "depression searches", 
        y = "number of weeeks")
 ```
-n<30 and not normal distribution: assumption for t-test not satisfied
 
-The assumptions for the two-sample t-test is not satisfied, so we decided use the Wilcox signed-rank test instead. 
 ```{r, depression-year-analysis, echo = FALSE}
 d2020 <- dtrends2020 %>% 
   select(depression) %>% 
@@ -60,7 +58,7 @@ wilcox.test(d2020, d2018, alternative = "two.sided",
             conf.level = .95)
 ```
 
-The null hypothesis is that there is no difference in the median number of depression searches in the US between the times of April 2020 and April 2018. The alternate hypothesis is that there is a difference between the two means. There is a p-value of 1. We cannot reject the null at the alpha = 0.05 level. We do not have enough evidence to claim that there is a difference in the median amount of depression searches in the US between the times of April 2020 and April 2018.
+
 
 ## "Anxiety" searches in April 2018 vs. April 2020
 ```{r anxiety-assumptions-2018, echo = FALSE}
@@ -70,18 +68,14 @@ ggplot(data = atrends2018, mapping = aes(x = anxiety)) +
        x = "anxiety searches", 
        y = "number of weeeks")
 ```
-n<30, but has a normal distribution : assumption satisfied
-
 ```{r anxiety-assumptions-2020, echo = FALSE}
 ggplot(data = atrends2020, mapping = aes(x = anxiety)) +
   geom_histogram(color = "snow3", fill = "lightsteelblue", binwidth = 1)+ 
   labs(title = "anxiety searches by week in April 2020 are not normally distributed", 
        x = "anxiety searches", 
        y = "number of weeks")
-```
-n<30 and not normal distribution: assumption not satisfied
 
-The assumptions for the two-sample t-test is not satisfied, so we decided use the Wilcox signed-rank test instead. 
+```
 ```{r anxiety-year-analysis, echo = FALSE}
 a2020 <- atrends2020 %>% 
   select(anxiety) %>% 
@@ -95,7 +89,7 @@ wilcox.test(a2020, a2018, alternative = "two.sided",
             paired = TRUE,
             conf.level = .95)
 ```
-The null hypothesis is that there is no difference in the median amount of anxiety searches in the US between the times of April 2020 and April 2018. The alternate hypothesis is that there is a difference between the two medians. This test has a p-value of 0.4227. We cannot reject the null at the alpha = 0.05 level. We do not have enough evidence to claim that there is a difference in the median number of anxiety searches in the US between the times of April 2020 and April 2018. 
+
 
 # Question 2: Is there a relationship between the level of new COVID cases per US state and depression and anxiety levels?
 
@@ -117,13 +111,11 @@ ggplot(data = trends, mapping = aes(x = depression)) +
        x = "depression searches", 
        y = "number of states")
 ```
-The outcomes within each group is not normal. The depression search trends for states with medium numbers of COVID cases and low numbers of COVID cases do not have a normal distribution, and n<30. Therefore, this assumption is not satisfied. By looking at the graphs, it also seems that there is not equal variance among each group, not satisfying the assumption of homoscedastic variance. In addition, these samples may not all be independent. Some states may have the same values/cultures as others, causing the people who live in each state to react to the virus similarly to each other and affecting the depression searches within those states. Because the assumptions for ANOVA is not satisfied, we decided to use the Kruskal-Wallis test despite the data not being independent.
 
 ```{r KW-test-depression-covid, echo = FALSE}
 kruskal.test(depression ~ case_cat, data = trends)
 ```
 
-The null is that there is no significant difference between the median depression trends of states with low COVID cases, medium COVID cases, and high COVID cases. The alternate hypothesis is that there exists at least one median that is different. Assuming the null hypothesis is true, the model follows a chi square distribution with a df of 2. The chi square statistic is 3.4137, and the corresponding p-value is 0.1814. Therefore, we can not reject the null under the alpha = 0.05 significance level. There is not enough evidence to suggest that there is at least one difference in median depression trends of states with low, medium, and high COVID cases.
 
 ## Association between "depression" searches and new COVID-19 cases per 100,000 residents in April 2020 
 ```{r depressionVScovid, echo = FALSE}
@@ -134,8 +126,7 @@ ggplot(trends, aes(New.COVID.cases.per.100.000.in.April, depression)) +
        x = "New COVID-19 cases (per 100,000) ", 
        y = "Google searches for depression (relative to state)" )
 ```
-The above scatter plot shows the relative Google searches for depression among the 50 American states as a function of new COVID-19 cases per 100,000 during the month of april, 2020.
-The line of best fit (in blue) is horizontal with R = approximately zero. Thus, we cannot see any correlation between the new COVID-19 cases and the Google searches for depression for the month of April.
+
 
 ## COVID cases vs. anxiety rate
 ```{r covid-anxiety-assumptions, echo = FALSE}
@@ -146,14 +137,11 @@ ggplot(data = trends, mapping = aes(x = anxiety)) +
        x = "anxiety searches", 
        y = "number of states")
 ```
-Looking at the graphs, outcomes within groups are not normally distributed for any level of COVID cases, so this assumption is not satisfied. It also looks like the within-group variance among all groups is not the same, so the assumption for homoscedastic variance is not satisfied. The samples are also not independent because states with similar values that live close to each other my have similar anxiety search trends. The assumptions for ANOVA are not satisfied. Therefore, we used the Kruskal-Wallis test.
 
 ```{r KW-test-anxiety-covid, echo = FALSE}
 kruskal.test(anxiety ~ case_cat, data = trends)
 ```
-The null is that there is no significant difference between the median anxiety trends of states with low COVID cases, medium COVID cases, and high COVID cases. The alternate hypothesis is that there exists at least one median that is different. Assuming the null hypothesis is true, the model follows a chi-square distribution with a df of 2. The chi square statistic is 7.425, and the corresponding p-value is 0.0242. Therefore, we can reject the null under the alpha = 0.05 significance level. There is  enough evidence to suggest that there is at least one difference in median anxiety trends of states with low, medium, and high COVID cases.
 
-Since the overall Kruskal-Wallis test was significant, we then performed step down to identify where the differences are. The appropriate stepdown test is the Wilcox rank sum test. To account for multiple comparison, we will perform the Bonferroni correction and assess our results.
 
 ```{r covid-KW-stepdown, echo = FALSE}
 low_covid <- trends %>% 
@@ -184,7 +172,6 @@ wilcox.test(med_covid, high_covid, data = licorice,
             paired = FALSE,
             conf.level = 0.95)
 ```
-We find that the only pairwise difference in medians that is significant at the adjusted siginficance level is between medium COVID-19 case states and high COVID-19 case states. The null hypothesis for this test would be that there is no difference in the median anxiety searches of states with medium COVID-19 cases and high COVID-19 cases. The alternate hypothesis is there is a difference in the two medians. The p-value = 0.00672, and the adjusted significance level is alpha = 0.05/3 = 0.0167. We reject the null at the adjusted significance level, and conclude that there is enough evidence to suggest that there is a difference in median anxiety searches of states with medium COVID-19 cases and high COVID-19 cases.
 
 ## Association between "anxiety" searches and new COVID-19 cases per 100,000 residents in April 2020
 ```{r anxietyVScovid, echo = FALSE}
@@ -195,9 +182,6 @@ ggplot(trends, aes(New.COVID.cases.per.100.000.in.April, anxiety)) +
        x = " New COVID-19 cases (per 100,000) ", 
        y = "Google searches for anxiety (relative to state)" )
 ```
-
-The above scatterplot shows the relative google searches for anxiety among the 50 american states as a function of new COVID-19 cases per 100,000 during the month of april, 2020.
-The line of best fit (in blue) has a positive slope. Thus, we can conclude that there's a correlation between anxiety searches and new COVID cases during the month of april. The more new COVID cases a state records, the higher anxiety searches it's expected to have. 
 
 ## Anxiety google searches vs new COVID-19 cases in April 2020
 
@@ -213,7 +197,6 @@ trends %>%
        x = "New COVID-19 cases per 100,000", 
        y = "Google searches for anxiety")
 ```
-The above boxplot shows that the states with the highest COVID-19 new cases per 100,000 also record the highest google searches for anxiety compared to the states with low or moderate COVID-19 new cases. We notice that the highlighted box corresponding to the high number of new COVID-19 cases per 100,000 states shows the highest median (approximately 87 compared to approximately 79 in the low and medium groups) and the highest maximum (approximately 97) and minimum (Approximately 74) upon excluding the extreme outliers in the low group.
 
 # Question3: Does the level of restriction in US states have a relationship with depression and anxiety levels?
 
@@ -235,12 +218,12 @@ ggplot(data = trends, mapping = aes(x = depression)) +
        x = "depression searches", 
        y = "number of states")
 ```
-Looking at the graphs, outcomes within groups are not normally distributed for low and medium restriction level states, so this assumption is not satisfied. It also looks like the within-group variance among all groups is not the same, so the assumption for homoscedastic variance is not satisfied. The samples are also not independent because states with similar values that live close to each other may have similar anxiety search trends. The assumptions for ANOVA are not satisfied. We therefore decided to use the Kruskal-Wallis test.
+
 
 ```{r KW-test-restriction-depression, echo = FALSE}
 kruskal.test(depression ~ restriction_cat, data = trends)
 ```
-The null is that there is no significant difference between the median depression trends of states with low restrictions, medium restrictions, and high restrictions. The alternate hypothesis is that there exists at least one median that is different. Assuming the null hypothesis is true, the model follows a chi-square distribution with a df of 2. The chi-square statistic is 1.723 with a df = 2, and the corresponding p-value is 0.4225. Therefore, we can not reject the null under the alpha = 0.05 significance level. There is not enough evidence to suggest that there is at least one difference in median depression trends of states with low, medium, and high restrictions.
+
 
 ## Restrictions vs. state anxiety trends
 ```{r restriction-anxiety-assumptions, echo = FALSE}
@@ -251,14 +234,10 @@ ggplot(data = trends, mapping = aes(x = anxiety)) +
        x = "anxiety searches", 
        y = "number of states")
 ```
-Looking at the graphs, outcomes within groups are not normally distributed for any level of COVID cases, so this assumption is not satisfied. It also looks like the within-group variance among all groups is not the same, so the assumption for homoscedastic variance is not satisfied. The samples are also not independent because states with similar values that live close to each other may have similar anxiety search trends. The assumptions for ANOVA are not satisfied. We therefore decide to use the Kruskal-Wallis test.
 
 ```{r KW-test-restriction-anxiety, echo = FALSE}
 kruskal.test(anxiety ~ restriction_cat, data = trends)
 ```
-The null is that there is no significant difference between the median anxiety trends of states with low restrictions, medium restrictions, and high restrictions. The alternate hypothesis is that there exists at least one median that is different. Assuming the null hypothesis is true, the model follows a chi square distribution with a df of 2. The chi square statistic is 12.719, and the corresponding p-value is 0.00173. Therefore, we reject the null under the alpha = 0.05 significance level. There is enough evidence to suggest that there is at least one difference in median anxiety trends of states with low, medium, and high restrictions.
-
-Since the overall Kruskal-Wallis test was significant, we then performed step down to identify where the differences are. The appropriate stepdown test is the Wilcox rank sum test. To account for multiple comparison, we will perform the Bonferroni correction and assess our results.
 
 ```{r restriction-KW-stepdown, echo = FALSE}
 low_rest <- trends %>% 
@@ -289,7 +268,6 @@ wilcox.test(med_rest, high_rest, data = trends,
             paired = FALSE,
             conf.level = 0.95)
 ```
-We find that there are two pairwise differences in medians that is significant at the adjusted significance level: low restriction states and high restrictions states, and medium restriction states vs. high restriction states. For the Wilcoxon rank sum test for low restriction vs. high restriction states, the p-value = 0.00213. With the adjusted significance level is alpha = 0.05/3 = 0.0167, we reject the null at the adjusted significance level, and conclude that there is enough evidence to suggest that there is a difference in median anxiety searches of states with low restrictions and high restrictions. Similarly, the Wilcoxon rank sum test for medium restriction vs. high restriction states had a p-value = 0.00239. We reject the null at the adjusted significance level alpha = 0.05/3, and conclude that there is enough evidence to suggest that there is a difference in median anxiety searches for medium restriction vs. high restriction states.
 
 ## Anxiety Google searches vs severity of restriction in April 2020
 ```{r anxietyVSrestrictions, echo = FALSE}
@@ -304,10 +282,165 @@ trends  %>%
        x = "Restrictions", 
        y = "Google searches for anxiety")
 ```
+# Write-up 
 
-The above boxplot shows that the states with the highest COVID-related restrictions also record the highest Google searches for anxiety compared to the states with low or moderate COVID-related restrictions. We notice that the highlighted box corresponding to the high restrictions states shows the highest median (approximately 87 compared to 78 and 79) and the highest maximum (approximately 97) and minimum (Approximately 76) upon excluding the extreme outliers in the medium group. 
+###Introduction 
+
+On January 31st, the Trump Administration declared a public health emergency in response to the COVID-19 outbreak. This announcement was the US public’s first formal indication that the novel coronavirus is a disease of great concern. By the end of March, COVID cases in the United States began skyrocketing and in response most states entered a period of lockdown. As a result of the virus outbreak and the newfound restrictions, many people’s lives were dramatically shifted. In many states, all consumer stores, with the exception of grocery stores and other essential businesses, closed their doors. Social gatherings were strictly limited to immediate family and close friends. In other words, the US entered, as CNN writer Ray Sanchez calls it, “a new normal.” 
+
+Given all of the monumental lifestyle changes in such a short period of time, we felt it would be interesting to explore the effect of these changes on mental health. As a result, we deduced the following research question: how does the post-COVID environment in the United States affect mental health? In an attempt to respond to this question, we created three appropriate step-down questions. First, are there differences in depression and anxiety levels pre vs. post COVID in the US? Second, is there a relationship between the level of COVID cases per US state and depression or anxiety levels? Third and finally, does the level of COVID-related restrictions in US states have a relationship with depression and anxiety levels?
+
+In an attempt to answer our research question, we collected our data from multiple sources. To look at the anxiety and depression trends across the United States, we utilized Google Trends data to track the relative search popularity of the terms “anxiety” and “depression” from April 2018 and April 2020. Google trends  Google trends marks their data by state through making a 100 for extremely popular all the way to 0 for not popular at all. For our depression and anxiety data, we collected the Google search trends for “depression” in each of the 50 states for the month of April in 2018  and 2020. The term “depression,” was categorized as a “mood”, to be differentiated from search terms relating to ideas such as “economic depression” or concavity. Similarly, we collected the Google search trends for “anxiety” in each of the 50 states for the month of April in 2018 and 2020. 
+Our data for new COVID cases per 100,000 residents for April 2020 across states comes from the New York Times. To find the specific number of new cases per 100,000 for April 2020, we first took the difference in total cases from April 29 to April 1 for each state. Next, we divided the number of new COVID cases by the state’s respective population and then multiplied that proportion by 100,000.
+Finally, we found our data on severity of restrictions in April 2020 by utilizing a ranking of restrictions across US states from most restrictive to least restrictive. To create the ranking, Wallethub compared US states across 18 relevant metrics, such as face covering requirements, travel restrictions, and state guidance on restaurant reopenings. While the overall Wallethub ranking is cited as “as of May 5,” we are operating under the assumption that the restriction ranking as of May 5 is representative for the month of April as we assumed that restriction measures for each state were relatively stable throughout all of April.
+
+### Methodology
+Data:
+Google Trends
+https://trends.google.com/trends/explore?q=%2Fm%2F03f_cb&geo=US
+https://trends.google.com/trends/explore?geo=US&q=anxiety
+COVID-19 Cases
+https://data.humdata.org/dataset/nyt-covid-19-data
+Restriction Severity Ranking:
+https://wallethub.com/edu/states-coronavirus-restrictions/73818/
+Variables:
+Relative Interest in Google search for “Depression” (0-100)
+Source: Google Trends
+Relative Interest in Google search for “Anxiety” (0-100)
+Source: Google Trends
+National interest in April 2018/2020 
+Source: Google Trends
+Interest by state in April 2018/2020
+Source: Google Trends
+Monthly average of confirmed COVID-19 cases for the month of April (case/capita) by state (low, medium, high)
+Data for confirmed COVID-19 cases was mutated from a continuous variable to a categorical variable (low, medium, high)
+We ordered states from those with the least number of new COVID-19 cases to those with the highest number of new COVID-19 cases. We then identified the bottom 17 as “low”, the middle 17 as “medium”, and the top 17 as “high”
+Source: The New York Times.
+Severity of state restriction (low, medium, high)
+We ordered states from those with the most severe COVID-related restrictions to those with the least severe COVID-related restrictions. We then identified the bottom 17 as “low”, the middle 17 as “medium”, and the top 17 as “high” 
+Source: Wallethub.
+Addressing step-down research questions:
+ 
+1. Are there differences in depression and anxiety levels pre vs. post COVID in the US?
+ 
+Statistical Tests: 
+ 
+For the US as a whole, we first wanted to compare the depression searches in April 2020 to the depression searches in April 2018. Our data was not independent because depression trends per week in April are not independent of each other, so we needed to choose between a Wilcox signed rank test or a paired t-test. We chose to conduct a paired Wilcox signed-rank test as the normality assumption for a paired t-test was not satisfied: both the histogram for the April 2020 depression data and the April 2018 depression searches were not normal with n<30. We also made it two-sided as we were looking for whether COVID-19 had any effect on depression searches, rather than if it only increased or decreased the number of searches. For the same reasons, a paired Wilcox signed-rank test was conducted to compare anxiety trends in April 2020 to April 2018. 
+ 
+ 
+2. Is there a relationship between the level of COVID cases per US state and depression and anxiety levels?
+
+Statistical Tests: 
+
+Because we needed to compare multiple different groups, we first tested to see if the assumptions for ANOVA were satisfied for state anxiety and depression data. When testing for assumptions, it was found that the outcomes within each group are not normal. The depression search trends and anxiety search trends for states of low, medium, and high COVID-19 cases were all not normally distributed, and n<30. Therefore, this assumption is not satisfied. By looking at the graphs, it also seems that there is not equal variance among each group, not satisfying the assumption of homoscedastic variance. In addition, these samples are not independent. Some states may have the similar cultural trends as others, causing similar reactions to the virus and with mental health. COVID-19 is also extremely contagious, so a high number of cases in one state could affect those around it. Since the assumptions for ANOVA are clearly not satisfied, we turned to ANOVA’s non-parametric alternative, the Kruskal-Wallace test. Although the assumption of independence was also not satisfied for reasons stated above, we chose to proceed with the Kruskal Wallace test with caution. It was also determined that step down tests would be done with Wilcoxon rank sum tests to remain consistent with the Kruskal Wallace test. 
+
+We conducted a Kruskal-Wallis test for depression search data to see whether there was at least one significant difference between the median depression searches in states with low, medium, and high COVID-19 rates. This hypothesis test was also repeated for state anxiety searches.
+
+Since the Kruskal-Wallis test was significant for anxiety searches, we then performed three step-down Wilcox rank sum tests to identify which specific differences between groups are significant.
+ 
+Visual Representations: 
+ 
+To visualize the results of the above statistical tests, we created a box plot that shows the relative google searches for anxiety among the 50 states on the y-axis, as a function of new COVID-19 cases per 100,000 of three levels : high, medium, low on the x-axis. We then compared the highlighted box corresponding to high COVID-19 new cases per 100,000 with the other two corresponding to medium and low cases, in terms of median, minimum and maximum anxiety rates. 
+ 
+To compare the anxiety and depression trends with new COVID-19 cases per 100,000 on a continuous scale, we created two scatter plots that show the relative google searches for depression or anxiety among the 50 states on the y-axis, as a function of the new COVID-19 cases during the month of april on the x-axis. We drew the lines of best fit  corresponding to these data using the geom_smooth() function to assess any correlation. Finally, we made our conclusions by observing the slopes of these two lines. 
+ 
+3. Does the level of COVID-related restrictions in US states have a relationship with depression and anxiety levels?
+ 
+Statistical Tests: 
+ 
+Because we needed to compare multiple different groups, we first tested to see if the assumptions for ANOVA were satisfied for state anxiety and depression data in low, medium, and high restriction groups. Looking at the graphs, outcomes within groups are not normally distributed for low and medium restriction level states, so this assumption is not satisfied. It also looks like the within-group variance among all groups for both depression and anxiety searches is not the same, so the assumption for homoscedastic variance is not satisfied. In addition, these samples may not all be independent. Some states that are close together may have similar cultural and political outlooks, causing these same states to enact related restriction policies. 
+
+Because the assumptions for ANOVA were not satisfied, we looked to the Kruskal Wallis test. Although the assumption for independence was not satisfied for the Kruskal test, we chose to use this test and proceed with caution. 
+
+We conducted a Kruskal-Wallis test for depression search data to see whether there was at least one significant difference between the median depression searches in states with low, medium, and high restriction severity. This hypothesis test was also repeated for state anxiety searches.
+
+Since the Kruskal-Wallis test was significant for anxiety searches, we then performed three step-down Wilcox rank sum tests to identify which specific differences between groups are significant.
+ 
+Visual Representations:
+ 
+To visualize the results of the above statistical tests, we created a box plot that shows the relative google searches for anxiety among the 50 states on the y-axis, as a function of COVID-related restrictions of three levels : high, medium, low on the x-axis. We then compared the highlighted box corresponding to high COVID-related restrictions with the other two corresponding to medium and low restrictions, in terms of median, minimum and maximum anxiety rates. 
+
+### Results
+
+Depression searches in April 2018 vs. April 2020 in the US:
+
+A paired Wilcox signed-rank test was conducted to see whether there was a difference in the median number of depression searches in the US in April 2020 compared to April 2018
+The null hypothesis is that there is no difference in the median number of depression searches in the US between the times of April 2020 and April 2018. The alternate hypothesis is that there is a difference between the two medians. This p-value of this test is 1. We cannot reject the null at the alpha = 0.05 level. We do not have enough evidence to claim that there is a difference in the median amount of depression searches in the US between the times of April 2020 and April 2018.
+
+Anxiety searches in April 2018 vs. April 2020 in the US:
+
+A paired Wilcox signed-rank test was conducted to see whether there was a difference in the median number of anxiety searches in the US in April 2020 compared to April 2018. The null hypothesis is that there is no difference in the median amount of anxiety searches in the US between the times of April 2020 and April 2018. The alternate hypothesis is that there is a difference between the two medians. Since the p-value = 0.4227, we cannot reject the null at the alpha = 0.05 level. We do not have enough evidence to claim that there is a difference in the median number of anxiety searches in the US between the times of April 2020 and April 2018. 
+
+New COVID cases vs. depression searches during April 2020 in the US:
+
+We then did a Kruskal-Wallis test to see if there was a significant difference between depression levels in states with low, medium, and high COVID rates. The null hypothesis is that there is no significant difference between the median depression trends of states with low COVID cases, medium COVID cases, and high COVID cases. The alternate hypothesis is that there exists at least one difference in the group medians. Assuming the null hypothesis is true, the model follows a chi square distribution with a df of 2. The chi square statistic is 3.4137, and the corresponding p-value is 0.1814. Therefore, we can not reject the null under the alpha = 0.05 significance level. There is not enough evidence to suggest that there is at least one difference in median depression trends of states with low, medium, and high COVID cases.
+
+We further created a scatter plot that shows the relative google searches for depression among the 50 states on the y-axis, as a function of the new COVID-19 cases during the month of april on the x-axis and drew the lines of best fit using the geom_smooth() function to assess any correlation. The dots showed no specific pattern and the line of best fit (in blue) is horizontal with slope of approximately zero. Thus, we cannot see any correlation between the new COVID-19 cases and the Google searches for depression for the month of April.
+ 
+New COVID cases vs. anxiety searches during April 2020 in the US:
+
+We did a Kruskal-Wallis test to see if there was a significant difference between anxiety levels in states with low, medium, and high COVID rates. The null is that there is no significant difference between the median anxiety trends of states with low COVID cases, medium COVID cases, and high COVID cases. The alternate hypothesis is that there exists at least one difference in the group medians. Assuming the null hypothesis is true, the model follows a chi-square distribution with a df of 2. The chi square statistic is 7.425, and the corresponding p-value is 0.0242. Therefore, we can reject the null under the alpha = 0.05 significance level. There is enough evidence to suggest that there is at least one difference in median anxiety trends of states with low, medium, and high COVID cases.
+
+Since the overall Kruskal-Wallis test was significant, we then performed step down tests to identify where the differences are. The appropriate step down test for the Kruskal-Wallis test is the Wilcox rank sum test. To account for multiple comparisons, we performed the Bonferroni correction and assessed our results.
+
+We found that the only pairwise difference in medians that is significant at the adjusted significance level is between medium new COVID-19 cases states and high new COVID-19 cases states. The null hypothesis for this test would be that there is no difference in the median anxiety searches of states with medium new COVID-19 cases and high new COVID-19 cases. The alternate hypothesis is there is a difference in the two medians. The p-value = 0.00672, and the adjusted significance level is alpha = 0.05/3 = 0.0167. We have sufficient evidence to reject the null at the adjusted significance level, and conclude that there is enough evidence to suggest that there is a difference in median anxiety searches of states with medium COVID-19 cases and high COVID-19 cases.
+
+To visualize these results, we created a box plot that shows the relative google searches for anxiety among the 50 states on the y-axis, as a function of new COVID-19 cases per 100,000 of three levels: high, medium, and low on the x-axis. The boxplot shows that the states with the highest COVID-19 new cases per 100,000 also record the highest google searches for anxiety compared to the states with low or medium COVID-19 new cases. We notice that the highlighted box corresponding to the high number of new COVID-19 cases per 100,000 states shows the highest median (approximately 87 compared to approximately 79 in the low and medium groups) and the highest maximum (approximately 97) and minimum (Approximately 74) upon excluding the extreme outliers in the low group. 
+
+We further created a scatter plot that shows the relative google searches for anxiety among the 50 states on the y-axis, as a function of the new COVID-19 cases during the month of april on the x-axis and drew the lines of best fit using the geom_smooth() function to assess any correlation. The line of best fit (in blue) showed a positive slope. Thus, we can conclude that there's a positive correlation between anxiety searches and new COVID cases during the month of april. The more new COVID cases a state records, the higher anxiety searches it's expected to have. 
+
+Restriction severity vs. depression searches during April 2020 in the US:
+
+We did another Kruskal-Wallis test to see if there was a significant difference between depression levels in states with low, medium, and high COVID-related restrictions. The null hypothesis is that there is no significant difference between the median depression trends of states with low restrictions, medium restrictions, and high restrictions. The alternate hypothesis is that there exists at least one median that is different. Assuming the null hypothesis is true, the model follows a chi-square distribution with a df of 2. The chi-square statistic is 1.723 with a df = 2, and the corresponding p-value is 0.4225. Therefore, we can not reject the null under the alpha = 0.05 significance level. There is not enough evidence to suggest that there is at least one difference in median depression trends of states with low, medium, and high restrictions.
+
+Restriction severity vs. anxiety searches during April 2020 in the US:
+
+A Kruskal-Wallis test was conducted to see if there was a significant difference between anxiety levels in states with low, medium, and high COVID-related restrictions. The null hypothesis is that there is no significant difference between the median anxiety trends of states with low restrictions, medium restrictions, and high restrictions. The alternate hypothesis is that there exists at least one median that is different. Assuming the null hypothesis is true, the model follows a chi square distribution with a df of 2. The chi square statistic is 12.719, and the corresponding p-value is 0.00173. Therefore, we reject the null under the alpha = 0.05 significance level. There is enough evidence to suggest that there is at least one difference in median anxiety trends of states with low, medium, and high restrictions.
+
+Since the overall Kruskal-Wallis test was significant, we then performed a step down to identify where the differences are. The appropriate step down test is the Wilcox rank sum test. To account for multiple comparisons, we will perform the Bonferroni correction and assess our results.
+
+We find that there are two pairwise differences in medians that are significant at the adjusted significance level: low restriction states and high restrictions states, and medium restriction states vs. high restriction states. For the Wilcoxon rank sum test for low restriction vs. high restriction states, the p-value = 0.00213. With the adjusted significance level is alpha = 0.05/3 = 0.0167, we have sufficient evidence to reject the null at the adjusted significance level, and conclude that there is enough evidence to suggest that there is a difference in median anxiety searches of states with low restrictions and high restrictions. Similarly, the Wilcoxon rank sum test for medium restriction vs. high restriction states had a p-value = 0.00239. We have sufficient evidence to reject the null at the adjusted significance level alpha = 0.05/3, and conclude that there is enough evidence to suggest that there is a difference in median anxiety searches for medium restriction vs. high restriction states.
+
+To visualize these results, we created a box plot that shows the relative google searches for anxiety among the 50 states on the y-axis, as a function of COVID-related restrictions of three levels : high, medium, low on the x-axis. The boxplot shows that the states with high COVID-related restrictions also record the highest google searches for anxiety compared to the states with low or medium COVID-related restrictions. We notice that the highlighted box corresponding to the high restrictions states shows the highest median (approximately 87 compared to 78 and 79) and the highest maximum (approximately 97) and minimum (Approximately 76) upon excluding the extreme outliers in the medium group.
+
+### Discussion
+
+Pre-COVID-19 anxiety/depression vs post-COVID-19 anxiety/depression:
+
+We were unable to find a difference between google searches pre-COVID-19 (April 2018) and post-COVID19 in (April 2020) for “depression” or “anxiety.” Specifically, both hypothesis tests generated a p-value greater than 0.05. However, we would suggest assessing the accuracy of these results. Our tests have many limitations as none of the assumptions for a two-sample t-test were satisfied and our data is limited to weekly observations of one month which is a very small sample that would greatly be affected by potential outliers.  
+
+New COVID-19 cases vs anxiety/depression:
+
+For the tests run to answer this question, we categorized states into having low, medium and high new COVID-19 cases into three groups and compared their medians to each other. The Kruskal-Wallis test we conducted comparing the median depression searches in each group, and concluded that there was not enough evidence to suggest that there is a significant difference in medians. However, a Kruskal-Wallis test comparing the median anxiety searches in each group generated significant results, suggesting that there is at least one difference in medians between the three groups. The Wilcox rank sum step down test we then conducted generated significant results suggesting that the median anxiety searches corresponding to high new COVID-19 cases per 100,000 residents is different than those corresponding to low and medium new COVID-19 cases per 100,000 residents.  Further exploring these results through scatter plots also showed no trend in the relationship between Google searches for “depression”  and new COVID cases per 100,000 residents and a slight positive correlation for Google searches for “anxiety.” In other words, we have results to suggest that states with more new COVID-19 cases also have higher Google searches for anxiety but not depression.
+
+COVID-19-related restriction severity vs anxiety/depression:
+
+Similar results were observed when using the same tests to compare Google searches for “anxiety” and “depression” with the level of COVID-related restrictions among states. On average, we found that states with higher COVID-related restrictions have higher Google searches for anxiety but we didn’t find any trend for depression.
+
+While we’re aware of the limitations in the tests we conducted, these consistent results make intuitive sense. Depression is a mental state that develops over an extended period of time and is often related to past events. However, our data is limited to the month of April, which is shortly after the COVID-19 situation broke out in the US. As a result, the reason we do not observe significant results regarding depression may be because of the nature of the illness itself, and not because depression is not affected by COVID-19. In addition, because this is a time filled with uncertainty, people may be worried about what’s coming next and how much their lives will change. This fear could possibly result in the increasing anxiety trends we observed. As noted by the McKinsey Global Institute in Safeguarding Lives and Livelihoods, “Daily reports of increasing infections and deaths across the world raise our anxiety and, in cases of personal loss, plug us into grief. There is uncertainty about tomorrow; about the health and safety of our families, friends and loved ones; and about our ability to live the lives we love.” 
+
+Reflection:
+
+As explained in the results section, most assumptions for our statistical methods were not satisfied and our data is limited to one month, thus we would suggest being cautious about the results. This may be because our sample size was too small. In the future, considering different statistical tests that do not rely on many assumptions or obtaining a larger sample size may lead to a more accurate result.
+
+There may also be additional error due to the fact that there were ties within our data sets. This caused some of our pairwise differences to be zero, leading us to be unable to compute the exact p-value with ties. This may result in an inaccurate p-value that may lead to an erroneous conclusion. This error may also be resolved if this study was repeated if we used different hypothesis tests with less assumptions or obtained a larger sample size.
+
+In addition, this study assumes that Google Search trends is a reflection of societal reality. This may not be the case as all people do not necessarily have access to the internet nor is there a guarantee that every person who experiences depression or anxiety will search it up on Google. If repeated, we would suggest considering alternative methods on collecting data on depression and anxiety trends that may be a more accurate representation of reality.
+
+As we only had restriction data as of May 5th, we also made the assumption that the restriction policies of the US states did not change from April until early May. However, this may or may not be the case. If we were to do this study again, we would try to obtain data that corresponds directly to April 2020. 
+
+When comparing depression and anxiety rates in April 2020 to April 2018, it would be more beneficial to use data showing how many depression or anxiety searches there were per day instead of per week in future studies. This way, we would be able to get a much larger sample size and possibly get more accurate results. Increasing the time span of measurement from only April to multiple months may also help us get more accurate results and avoid basing our analysis on a short period of time during which the data were unusually different. 
+
+Hopefully as a result of this study and follow-up studies on this topic, policy makers and leaders across the country can understand the effect that certain decisions in the post-COVID era have on mental health and work to minimize the uncertainty associated with the situation by providing people with the resources they need. 
+
+### Citations
 
 
+https://www.whitehouse.gov/presidential-actions/proclamation-declaring-national-emergency-concerning-novel-coronavirus-disease-covid-19-outbreak/#:~:text=The%20Secretary%20of%20Health%20and,in%20response%20to%20COVID%2D19.
+
+https://www.cnn.com/2020/04/16/us/coronavirus-pandemic-new-normal/index.html
+
+https://www.mckinsey.com/industries/healthcare-systems-and-services/our-insights/returning-to-resilience-the-impact-of-covid-19-on-behavioral-health
 
 
   
