@@ -60,7 +60,7 @@ wilcox.test(d2020, d2018, alternative = "two.sided",
             conf.level = .95)
 ```
 
-The null hypothesis is that there is no difference in the median number of depression searches in the US between the times of April 2020 and April 2018. The alternate hypothesis is that there is a difference between the two means. Assuming that the null hypothesis is true, the model follows a z-distribution. The z-statistic is 5.5. This corresponds to a p-value of 1. We cannot reject the null at the alpha = 0.05 level. We do not have enough evidence to claim that there is a difference in the median amount of depression searches in the US between the times of April 2020 and April 2018.
+The null hypothesis is that there is no difference in the median number of depression searches in the US between the times of April 2020 and April 2018. The alternate hypothesis is that there is a difference between the two means. There is a p-value of 1. We cannot reject the null at the alpha = 0.05 level. We do not have enough evidence to claim that there is a difference in the median amount of depression searches in the US between the times of April 2020 and April 2018.
 
 ## "Anxiety" searches in April 2018 vs. April 2020
 ```{r anxiety-assumptions-2018, echo = FALSE}
@@ -95,7 +95,7 @@ wilcox.test(a2020, a2018, alternative = "two.sided",
             paired = TRUE,
             conf.level = .95)
 ```
-The null hypothesis is that there is no difference in the median amount of anxiety searches in the US between the times of April 2020 and April 2018. The alternate hypothesis is that there is a difference between the two medians. Assuming that the null hypothesis is true, the model follows a z-distribution. The z-statistic is 1. This corresponds to a p-value of 0.4227. We cannot reject the null at the alpha = 0.05 level. We do not have enough evidence to claim that there is a difference in the median number of anxiety searches in the US between the times of April 2020 and April 2018. 
+The null hypothesis is that there is no difference in the median amount of anxiety searches in the US between the times of April 2020 and April 2018. The alternate hypothesis is that there is a difference between the two medians. This test has a p-value of 0.4227. We cannot reject the null at the alpha = 0.05 level. We do not have enough evidence to claim that there is a difference in the median number of anxiety searches in the US between the times of April 2020 and April 2018. 
 
 # Question 2: Is there a relationship between the level of new COVID cases per US state and depression and anxiety levels?
 
