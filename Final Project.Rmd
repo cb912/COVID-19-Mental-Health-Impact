@@ -155,7 +155,7 @@ The null is that there is no significant difference between the median anxiety t
 
 Since the overall Kruskal-Wallis test was significant, we then performed step down to identify where the differences are. The appropriate stepdown test is the Wilcox rank sum test. To account for multiple comparison, we will perform the Bonferroni correction and assess our results.
 
-```{r covid-KW-stepdown}
+```{r covid-KW-stepdown, echo = FALSE}
 low_covid <- trends %>% 
   filter(case_cat == "low") %>%
   select(anxiety) %>%
@@ -201,7 +201,7 @@ The line of best fit (in blue) has a positive slope. Thus, we can conclude that 
 
 ## Anxiety google searches vs new COVID-19 cases in April 2020
 
-```{r COVIDcaseVSanxiety}
+```{r COVIDcaseVSanxiety, echo = FALSE}
 trends$case_cat <-factor(trends$case_cat, levels = c("low", "medium", "high")) 
 trends %>% 
   mutate( type=ifelse(trends$case_cat=="high","Highlighted","Normal")) %>% ggplot( aes(x=trends$case_cat, y=anxiety, fill=type, alpha=type)) + 
